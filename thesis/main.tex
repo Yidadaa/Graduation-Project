@@ -33,7 +33,13 @@
 	\section{强化学习算法的国内外研究历史与现状}
 	强化学习作为机器学习领域另一个研究热点，已经广泛应用于工业制造。因此RL 方法更加侧重于学习解决问题的策略。随着人类社会的飞速发展，在越来越多复杂的现实场景任务中，需要利用深度学习(Deep Learning, DL)来自动学习大规模输入数据的抽象表征，并以此表征为依据进行自我激励的RL，优化解决问题的策略。RL的基本思想是通过最大化智能体(agent)从环境中获得的累计奖赏值，以学习到完成目标的最优策略。由此，谷歌的人工智能研究团队DeepMind 创新性地将具有感知能力的DL和具有决策能力的RL相结合，形成了人工智能领域新的研究热点，即深度强化学习(Deep Reinforcement Learning，DRL)。此后，在很多挑战性领域中，DeepMind 团队构造并实现了人类专家级别的agent。这些agent 对自身知识的构建和学习都直接来自原始输入信号，无需任何的人工编码和领域知识。因此DRL 是一种端对端(end-to-end)的感知与控制系统，具有很强的通用性。目前DRL技术在游戏等领域中得到了广泛的应用，并被认为是迈向通用人工智能(Artificial General Intelligence，AGI)的重要途径。
 	
-	目前主流的强化学习算法主要分为如下几类：
+	\begin{figure}
+		\includegraphics[width=15cm]{./pic/fg6.jpg}
+		\caption{主流强化学习算法}
+		\label{fg6}
+	\end{figure}
+	
+	如图\ref{fg6}所示，目前主流的强化学习算法主要分为如下几类：
 	\begin{enumerate}
 		\item 基于值函数优化(Value Optimization)的算法，代表算法为Q-Learning，Mnih 等人将卷积神经网络与传统RL中的Q-Learning算法相结合，提出了深度Q网络(Deep Q-Network, DQN)模型，此后又涌现出双深度Q网络(Double Deep Q-Network, DDQN)、分类Q网络(Categorical Deep Q-Network，CDQN)、增强Q网络(Bootstrapped Deep Q-Network)等一系列值优化模型；
 		
@@ -43,7 +49,7 @@
 	\end{enumerate}
 	
 	\section{本文的主要贡献与创新}
-	[TODO]
+	本文尝试将Unity 3D环境与强化学习算法的训练过程结合起来，使得强化学习的训练时间大幅度减少。并且通过Unity强大的物理引擎尽可能地拟合真实环境，从而使得训练出的强化学习模型无需经过细致调参优化就可以很好地迁移应用到实体机械环境上。
 	
 	\section{本论文的结构安排}
 	本文的主要章节安排如下：第二章主要介绍了强化学习领域的基础知识，并对主流的强化学习算法进行对比介绍；第三章则介绍目前强化学习在机器控制领域的主流仿真环境，并将其与Unity进行对比；第四章介绍架构的组成。
@@ -269,7 +275,64 @@
 		\label{eq23}
 		J(\theta^\mu)=E_{\theta^\mu}[r_1+\gamma r_2+\gamma^2r_3+\dots]
 	\end{equation}
-	然后，采用随机梯度下降方法来对目标函数进行端对端的优化。
+	然后，采用随机梯度下降方法来对目标函数进行端对端的优化。Silver等人证明了目标函数关于$\theta^\mu$的梯度等价于Q值函数关于$\theta^\mu$的期望梯度：
+	\begin{equation}
+		\label{eq24}
+		\frac{\partial J(\theta^\mu)}{\partial \theta^\mu}=E_s[\frac{\partial Q(s,a|\theta^Q)}{\partial \theta^\mu}]
+	\end{equation}
+	根据确定性策略$a=\pi(s|\theta^\mu)$可得：
+	\begin{equation}
+		\label{eq25}
+		\frac{\partial J(\theta^\mu)}{\partial \theta^\mu}=E_s[\frac{\partial Q(s,a|\theta^Q)}{\partial a}\frac{\partial \pi(s|\theta^\mu)}{\partial \theta^\mu}]
+	\end{equation}
+	通过DQN中更新值网络的方法来更新评论家网络，此时的梯度信息为：
+	\begin{equation}
+		\label{eq26}
+		\frac{\partial J(\theta^Q)}{\partial \theta^Q}=E_{s,a,r,s'\sim D}[(y-Q(s,a|\theta^Q))\frac{\partial Q(s,a|\theta^Q)}{\partial \theta^Q}]
+	\end{equation}
+	其中，$y=r+\gamma Q(s',\pi(s'|\hat{\theta ^\mu})|\hat{\theta ^Q})$，$\hat{\theta ^\mu}$和$\hat{\theta ^Q}$分别表示目标策略网络和目标值网络的参数。DDPG使用经验回放机制从D中获得训练样本，并将由Q值函数关于动作的梯度信息从评论家网络传递给行动者网络。并根据式\ref{eq25}沿着提升Q的方向更新策略网络的参数。
+	
+	实验表明，DDPG不仅在一系列连续动作空间的任务中表现稳定，而且求得最优解所需要的时间步也远远少于DQN。与基于值函数的DRL方法相比，基于AC框架的深度策略梯度方法优化策略效率更高、求解速度更快。
+	
+	然而在有噪声干扰的复杂环境下，策略一般都具有一定的随机性。DDPG使用确定性的策略梯度方法。对于随机环境的场景，该方法并不适用。针对此问题，Heess等人提出了一种适用于连续动作空间任务的通用框架，称为随机值梯度(Stochastic Value Gradient，SVG)方法。SVG使用“再参数化”(re-parameterization)的数学技巧来学习环境动态性的生成模型，将确定性策略梯度方法扩展为一种随机环境下的策略优化过程。Balduzzi等人基于相容的值函数逼近器(compatible function approximation)理论，提出了值梯度反向更新(Value-Gradient Backpropagation，GProp)方法。Peng等人融合多个策略网络和对应的值网络，提出了一种基于混合型行动者评论家指导(Mixture of Actor Critic Experts，MACE)的深度策略梯度方法。该方法在自适应机器人控制任务中取得了实质性的进展。MACE相比于单个AC框架指导的深度策略梯度方法，有着更快的学习速度。随后，Heess等人使用循环神经网络，进一步扩展了DPG和SVG算法的适用范围，提出了循环确定性策略梯度(Recurrent Deterministic Policy Gradient，RDPG)和循环随机值梯度(Recurrent Stochastic Value Gradient，RSVG)方法。RDPG和RSVG可以处理一系列部分可观察场景下连续动作的控制任务。Hausknecht等人进一步将深度策略梯度方法扩展到了参数化的连续动作空间问题中。此后，Schulman等人提出了一种形式化的随机计算图模型(stochastic computation graphs)，开展了同时包含随机性和确定性操作的复杂深度策略梯度的研究。
+	
+	\subsection{异步优势行动者评论家算法}
+	不同类型的深度神经网络为DRL中策略优化任务提供了高效运行的表征形式。为了缓解传统策略梯度方法与神经网络结合时出现的不稳定性，各类深度策略梯度方法(如DDPG、SVG等)都采用了经验回放机制来消除训练数据间的相关性。然而经验回放机制存在两个不足之处：
+	\begin{enumerate}
+		\item agent与环境的每次实时交互都需要耗费很多的内存和计算力；
+		\item 经验回放机制要求agent采用离策略(off-policy)方法来进行学习，而离策略方法只能基于旧策略生成的数据进行更新。
+	\end{enumerate}
+	针对这些问题，Mnih等人根据异步强化学习(Asynchronous Reinforcement Learning，ARL)的思想，提出了一种轻量级的DRL框架，该框架可以使用异步的梯度下降法来优化网络控制器的参数，并可以结合多种RL算法。其中，异步的优势行动者评论家算法(Asynchronous Advantage Actor-Critic，A3C)在各类连续动作空间的控制任务上表现的最好。
+	
+	具体地，A3C算法利用CPU多线程的功能并行、异步地执行多个agent。因此在任意时刻，并行的agent都将会经历许多不同的状态，去除了训练过程中产生的状态转移样本之间的关联性。因此这种低消耗的异步执行方式可以很好地替代经验回放机制。
+	
+	A3C算法在训练时降低了对硬件的要求。深度策略梯度算法十分依赖计算能力很强的图形处理器(Graphics Processing Unit，GPU)，而A3C算法在实际的操作过程中只需要一个标准的多核CPU。由表\ref{tb1}可知，A3C算法通过应用多线程技术，降低了模型对硬件的需求，在训练时间更少的情况下，A3C算法在Atari 2600游戏任务上的平均性能有明显提升。而且A3C算法能够只根据原始的视觉输入学习到行走3D迷宫的有效策略。此外，A3C算法还可以广泛应用于各种连续动作空间问题。综上所述，A3C算法能够广泛应用于各种2D、3D离散和连续动作空间的任务，并且在这些任务中都取得了最佳的效果。这说明A3C是目前最通用和最成功的一种DRL算法。当然，将A3C与近期的一些深度策略梯度算法相结合可能会进一步提升其性能。
+	
+	\begin{table}[h]
+		\caption{不同的DRL模型在57个Atari游戏上的平均耗时以及游戏性能的提升}
+		\label{tb1}
+		\begin{tabular}{|c|c|c|c|}
+			\hline
+			模型 & 训练条件 & 训练时间/天 & 平均性能提升 \\
+			\hline
+			DQN & GPU & 8 & 121.9\% \\
+			\hline
+			DDQN & GPU & 8 & 332.9\% \\
+			\hline
+			Dueling DDQN & GPU & 8 & 343.8\% \\
+			\hline
+			Prioritized DQN & GPU & 8 & 463.6\% \\
+			\hline
+			A3C,FF & CPU & 1 & 344.1\% \\
+			\hline
+			A3C,FF & CPU & 4 & 496.8\% \\
+			\hline
+			A3C,LSTM & CPU & 4 & 623.0\% \\
+			\hline
+		\end{tabular}
+	\end{table}
+	除了基于值函数的DRL和基于策略梯度的DRL之外，还可以通过增加额外的人工监督来促进策略搜索的过程，即为基于搜索与监督的DRL的核心思想。蒙特卡洛树搜索(Monte Carlo Tree Search，MCTS)作为一种经典的启发式策略搜索方法，被广泛用于游戏博弈问题中的行动规划。因此在基于搜索与监督的DRL方法中，策略搜索一般是通过MCTS来完成的。例如Google公司的AlphaGo围棋算法就将深度神经网络和MCTS相结合，并取得了卓越的成就。
+	
 	
 	\chapter{全文总结与展望}
 	

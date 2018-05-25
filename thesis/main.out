@@ -19,14 +19,15 @@
 \BOOKMARK [1][-]{section.2.3}{基于策略梯度的深度强化学习}{chapter.2}% 19
 \BOOKMARK [2][-]{subsection.2.3.1}{深度策略梯度的起源与发展}{section.2.3}% 20
 \BOOKMARK [2][-]{subsection.2.3.2}{基于行动者评论家的深度策略梯度方法}{section.2.3}% 21
-\BOOKMARK [0][-]{chapter.3}{全文总结与展望}{}% 22
-\BOOKMARK [1][-]{section.3.1}{全文总结}{chapter.3}% 23
-\BOOKMARK [1][-]{section.3.2}{后续工作展望}{chapter.3}% 24
-\BOOKMARK [0][-]{chapter*.9}{致 谢}{}% 25
-\BOOKMARK [0][-]{chapter*.10}{参考文献}{}% 26
-\BOOKMARK [0][-]{chapter*.11}{附录}{}% 27
-\BOOKMARK [0][-]{chapter*.12}{攻读本科学位期间取得的成果}{}% 28
-\BOOKMARK [0][-]{chapter*.13}{外文资料原文}{}% 29
-\BOOKMARK [1][-]{section.3.1}{A\040Tight\040Upper\040Bound\040on\040Bit\040Error\040Rate}{chapter*.13}% 30
-\BOOKMARK [0][-]{chapter*.14}{外文资料译文}{}% 31
-\BOOKMARK [1][-]{section.3.1}{基于多载波索引键控的正交频分多路复用系统模型}{chapter*.14}% 32
+\BOOKMARK [2][-]{subsection.2.3.3}{异步优势行动者评论家算法}{section.2.3}% 22
+\BOOKMARK [0][-]{chapter.3}{全文总结与展望}{}% 23
+\BOOKMARK [1][-]{section.3.1}{全文总结}{chapter.3}% 24
+\BOOKMARK [1][-]{section.3.2}{后续工作展望}{chapter.3}% 25
+\BOOKMARK [0][-]{chapter*.11}{致 谢}{}% 26
+\BOOKMARK [0][-]{chapter*.12}{参考文献}{}% 27
+\BOOKMARK [0][-]{chapter*.13}{附录}{}% 28
+\BOOKMARK [0][-]{chapter*.14}{攻读本科学位期间取得的成果}{}% 29
+\BOOKMARK [0][-]{chapter*.15}{外文资料原文}{}% 30
+\BOOKMARK [1][-]{section.3.1}{A\040Tight\040Upper\040Bound\040on\040Bit\040Error\040Rate}{chapter*.15}% 31
+\BOOKMARK [0][-]{chapter*.16}{外文资料译文}{}% 32
+\BOOKMARK [1][-]{section.3.1}{基于多载波索引键控的正交频分多路复用系统模型}{chapter*.16}% 33
