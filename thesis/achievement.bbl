@@ -1,0 +1,27 @@
+\begin{thebibliography}{lo}
+\interlinepenalty=10000
+\setlength{\itemsep}{0bp}\setlength{\parskip}{0pt}\small
+\bibitem{li2010new} J.~Y. Li, Y.~W. Zhao, Z.~P. Nie. New memory method of
+  impedance elements for marching-on-in-time solution of time-domain integral
+  equation[J]. Electromagnetics, 2010, 30(5): 448-462
+\bibitem{lijinyan2010shi} 张三, 李四.
+  时间步进算法中阻抗矩阵的高效存储新方法[J].
+  电波科学学报, 2010, 25(4): 624-631
+\bibitem{lijinyan2013shi} 张三, 李四.
+  时域磁场积分方程时间步进算法稳定性研究[J]. 物理学报,
+  2013, 62(9): 090206-1-090206-6
+\bibitem{zhangdianzikeji}
+  张三，李四.时域磁场积分方程时间步进算法后时稳定性研究.电子科技大学学报[J]（已录用，待刊）
+\bibitem{li2012parameters} S.~Zhang. Parameters discussion in two-level plane
+  wave time-domain algorithm[C]. 2012 IEEE International Workshop on
+  Electromagnetics, Chengdu, 2012, 38-39
+\bibitem{zhangsan2008} 张三, 李四.
+  时域积分方程时间步进算法研究[C].
+  电子科技大学电子科学技术研究院第四届学术交流会,
+  成都, 2008, 164-168
+\bibitem{zhangsan4}
+  张三（4）.人工介质雷达罩技术研究.国防科技进步二等奖，2008
+  年
+\bibitem{onlynoteexample}
+  XXX，XXX，XXX，XXX，王升．XXX的陶瓷研究．四川省科技进步三等奖，2003年12月
+\end{thebibliography}
