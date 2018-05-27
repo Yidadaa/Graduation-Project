@@ -5,6 +5,11 @@
 \title{UESTC Thesis Template}
 \author{张义飞}
 
+\usepackage{listings}
+\usepackage{fontspec}  
+\setmonofont{Consolas}  
+
+
 \begin{document}
 	
 	\begin{chineseabstract}
@@ -49,10 +54,10 @@
 	\end{enumerate}
 	
 	\section{本文的主要贡献与创新}
-	本文尝试将Unity 3D环境与强化学习算法的训练过程结合起来，使得强化学习的训练时间大幅度减少。并且通过Unity强大的物理引擎尽可能地拟合真实环境，从而使得训练出的强化学习模型无需经过细致调参优化就可以很好地迁移应用到实体机械环境上。
+	本文尝试将虚拟现实技术中的Unity 3D环境与强化学习算法的训练结合起来，使得强化学习的训练时间大幅度减少。同时通过Unity强大的物理引擎尽可能地拟合真实环境，从而使得训练出的强化学习模型无需经过细致调参优化就可以很好地迁移应用到实体机械环境上。
 	
 	\section{本论文的结构安排}
-	本文的主要章节安排如下：第二章主要介绍了强化学习领域的基础知识，并对主流的强化学习算法进行对比介绍；第三章则介绍目前强化学习在机器控制领域的主流仿真环境，并将其与Unity进行对比；第四章介绍架构的组成。
+	本文的主要章节安排如下：第二章主要介绍了强化学习领域的基础知识，并对主流的强化学习算法的发展路线进行梳理；第三章首先介绍了Unity相对于传统强化学习仿真框架的优势，然后对本文采用的强化学习算法进行介绍，之后分别介绍该算法在2D环境和3D环境中的性能表现，并对Unity与强化学习整合的可能性进行评估；第四章对全文进行总结和回顾。
 	
 	\chapter{强化学习理论}
 	\section{强化学习基础}
@@ -258,7 +263,7 @@
 	\end{equation}
 	其中$\delta_t=r_t+\gamma r_{t+1}+\gamma^2V(s_{t+2})-V(s_t)$。$\lambda$是一个调节因子，范围大小为$0<\lambda<1$。当$\lambda$接近0时，$\hat{A_t^\gamma}$是低方差、高误差的；当$\lambda$接近于1时，$\hat{A_t^\gamma}$是高方差、低误差的。
 	
-	基于广义优势函数的策略梯度方法的不足之处在于：在利用式\ref{eq16}全局优化策略的过程中，很难确定一个合理的步长参数$\alpha$来保证学习的稳定性。针对此问题，Schulman等人提出了一种被称为区域信赖的策略最优化(Trust Region Policy Optimization，TRPO)方法。TRPO的核心思想是：强制限制同一批次数据上新旧两种策略预测分布的KL差异，从而避免导致策略发生太大改变的参数更新步。为了将应用范围扩展到大规模状态空间的DRL任务中，TRPO算法使用深度神经网络来参数化策略，在只接收原始输入图像的情况下实现了端对端的控制。实验表明，TRPO在一系列2D场景下的机器人控制和Atari 2600游戏任务中都表现优异。此后，Schulman等人又尝试将广义优势函数与TRPO方法相结合，在一系列3D场景下的机器人控制任务中取得了突破。
+	基于广义优势函数的策略梯度方法的不足之处在于：在利用式\ref{eq16}全局优化策略的过程中，很难确定一个合理的步长参数$\alpha$来保证学习的稳定性。针对此问题，Schulman等人提出了一种被称为区域信赖的策略最优化(Trust Region Policy Optimization，)方法。TRPO的核心思想是：强制限制同一批次数据上新旧两种策略预测分布的KL差异，从而避免导致策略发生太大改变的参数更新步。为了将应用范围扩展到大规模状态空间的DRL任务中，TRPO算法使用深度神经网络来参数化策略，在只接收原始输入图像的情况下实现了端对端的控制。实验表明，TRPO在一系列2D场景下的机器人控制和Atari 2600游戏任务中都表现优异。此后，Schulman等人又尝试将广义优势函数与TRPO方法相结合，在一系列3D场景下的机器人控制任务中取得了突破。
 	
 	此外，深度策略梯度方法的另一个研究方向是通过增加额外的人工监督来促进策略搜索。例如著名的AlphaGo围棋机器人，先使用监督学习从人类专家的棋局中预测人类的走子行为，再用策略梯度方法针对赢得围棋比赛的真实目标进行精细的策略参数调整。然而在某些任务中是缺乏监督数据的，比如现实场景下的机器人控制，可以通过引导式策略搜索(guided policy search)方法来监督策略搜索的过程。在只接受原始输入信号的真实场景中，引导式策略搜索实现了对机器人的操控。
 	
@@ -333,17 +338,117 @@
 	\end{table}
 	除了基于值函数的DRL和基于策略梯度的DRL之外，还可以通过增加额外的人工监督来促进策略搜索的过程，即为基于搜索与监督的DRL的核心思想。蒙特卡洛树搜索(Monte Carlo Tree Search，MCTS)作为一种经典的启发式策略搜索方法，被广泛用于游戏博弈问题中的行动规划。因此在基于搜索与监督的DRL方法中，策略搜索一般是通过MCTS来完成的。例如Google公司的AlphaGo围棋算法就将深度神经网络和MCTS相结合，并取得了卓越的成就。
 	
+	\chapter{强化学习算法实践}
+	\section{强化学习常用仿真环境对比}
+	\subsection{OpenAI Gym工具集}
+	OpenAI是一个非营利性质的人工智能公司，其致力于有益于人类的友好型AI。Gym是该公司推出的一套工具集，用于为强化学习算法提供一个通用的评价标准。该工具集不对用户的agent做出任何限制，这导致该工具集有着极强的兼容性，可以很好地兼容诸如Tensorflow、Theano或者Keras等主流机器学习库。
+	
+	\begin{figure}[h]
+		\centering
+		\subfigure{
+			\includegraphics[width=7cm]{./pic/gym-envs.jpg}
+		}
+		\subfigure{
+			\includegraphics[width=7cm]{./pic/gym-game.jpg}
+		}
+		\caption{Gym内置了多种多样的环境}
+		\label{openai}
+	\end{figure}
+	
+	Gym工具集内置了多样化的测试环境，用户可以很方便地在这些环境中开发以及测试强化学习算法，这些环境共用同一套接口，这意味着用户可以用其编写通用性很强的算法。
+	
+	如\ref{openai}所示，目前Gym已经包含了摆臂、自动驾驶汽车、简单机械臂、蜘蛛型机器人、人形机器人等环境，不仅如此，Gym还包含了一个用于测试强化学习算法的游戏平台，涵盖了70余个雅达利和30多个世嘉平台游戏，并且OpenAI还发布了用于向Gym平台添加新游戏的工具。
+	
+	Gym极大地方便了学术界对强化学习算法及其泛化能力的研究，以往RL领域的研究主要集中在优化agent完成单个任务的能力上。
+	
+	\subsection{Robot Operating System(ROS)平台}
+	ROS(Robot Operating System, 机器人操作系统)，是专为机器人软件开发所设计出来的一套电脑操作系统架构。它是一个开源的元级操作系统(后操作系统)，提供类似于操作系统的服务，包括硬件抽象描述、底层驱动程序管理、共用功能的执行、程序间消息传递、程序发行包管理，它也提供一些工具和库用于获取、建立、编写和执行多机融合的程序。
+	
+	ROS的运行架构是一种使用ROS通信模块实现模块间P2P(Peer to Peer, 点对点)的松耦合的网络连接的处理架构，它执行若干种类型的通讯，包括：
+	\begin{itemize}
+		\item 基于服务的同步RPC(Remote Progress Call, 远程过程调用)通讯；
+		\item 基于Topic的异步数据流通讯，还有参数服务器上的数据存储。
+	\end{itemize}
+	\begin{figure}[h]
+		\centering
+		\subfigure{
+			\includegraphics[width=6cm]{./pic/ros-intro.png}
+		}
+		\subfigure{
+			\includegraphics[width=8cm]{./pic/ros-screenshot.jpg}
+		}
+		\caption{ROS仿真环境}
+	\end{figure}
+
+	ROS的首要设计目标是在机器人研发领域提高代码复用率。ROS是一种分布式处理框架，这使可执行文件能被单独设计，并且在运行时松散耦合。这些过程可以封装到数据包(Packages)和堆栈(Stacks)中，以便于共享和分发。ROS还支持代码库的联合系统。使得协作亦能被分发。这种从文件系统级别到社区一级的设计让独立地决定发展和实施工作成为可能。上述所有功能都能由ROS的基础工具实现。
+	
+	为了实现“共享与协作”这一首要目标，人们制订了ROS架构中的其他支援性目标：
+	
+	\begin{itemize}
+		\item 轻量级：ROS是设计得尽可能方便简易，不必替换主框架与系统即可用于其他机器人软件框架中。
+		
+		\item 语言独立性：ROS框架很容易在任何编程语言中执行。目前已经能在Python和C++中顺利运行，同时添加有Lisp、Octave和Java语言库。
+		
+		\item 测试简单：ROS有一个内建的单元/组合集测试框架，这使得集成调试和分解调试很容易。
+		
+		\item 扩展性：ROS适合于大型实时系统与大型的系统开发项目。
+	\end{itemize}
+
+	\subsection{Unity游戏引擎}
+	Unity 是一套跨平台的游戏引擎，可用于开发 Windows、MacOS、Linux 平台的单机游戏，或是 iOS、Android 移动设备的游戏。Unity 也可开发支持 WebGL 技术的网页游戏，或 PlayStation、XBox、Wii 主机上的游戏。目前Unity被广泛应用于虚拟现实应用的开发，是虚拟现实技术栈中不可或缺的一部分。
+	
+	Unity 支持 PhysX 物理引擎、粒子系统，并且提供网络多人连接的功能，无需学习复杂的编程语言，匹配游戏制作上的各项需求。Unity 的推出降低游戏开发的门槛，即使是个人或小型团队制作游戏也不再是梦想。对于游戏公司而言，选择使用 Unity 引擎也可以缩短游戏的开发时间。
+	
+	Unity 类似于Director，Blender，Virtools或Torque Game Builder等利用交互的图型化开发环境为首要方式的软件其编辑器运行在Windows和Mac OS X下，可发布游戏至Windows、Wii、OSX或iOS平台。也可以利用Unity web player插件发布网页游戏，支持Mac和Windows的网页浏览。它的网页播放器也被Mac widgets所支持。Unity3D是一个用于创建诸如三维电子游戏、建筑可视化、实时三维动画等类型互动内容的综合型创作工具。
+	\begin{figure}[h]
+		\centering
+		\subfigure{
+			\includegraphics[width=6cm]{./pic/unity-logo.jpg}
+		}
+		\subfigure{
+			\includegraphics[width=8cm]{./pic/unity.jpg}
+		}
+		\caption{ROS仿真环境}
+	\end{figure}
+
+	\subsection{三者特性对比}
+	严格来说，Unity的主要用途是游戏开发，但是得益于其优异的物理仿真性能，将其用于强化学习算法的训练也并非不可能。表\ref{compare}将Unity与Gym和ROS的特性进行了对比，可以看到Gym由于专注于为学术界提供标准，其自定义性并不强，而ROS则为工业界而生，专业性和复杂度都相当高，其功能大而全，而Unity则很好地平衡了两者的优缺点，所以将Unity平台于强化学习算法结合相当值得一试。
+	
+	\begin{table}[h]
+		\caption{Gym、ROS、Unity三者特性对比}
+		\label{compare}
+		\begin{tabular}{|c|c|c|c|c|c|}
+			\hline
+			架构 & 复杂度 & 易用性 & 物理引擎 & 3D模型导入 & 专业性 \\
+			\hline
+			Gym & 低 & 高 & 2D & 不支持 & 高 \\
+			\hline
+			ROS & 高 & 低 & 3D & 支持 & 高 \\
+			\hline
+			Unity & 低 & 高 & 2D/3D & 支持 & 中 \\
+			\hline
+		\end{tabular}
+	\end{table}
+
+	\section{基于A3C架构的近端梯度优化算法}
+	[TODO] PPO算法原理介绍
+	
+	\section{二维机械臂环境中的PPO算法实践}
+	[TODO] 基于pyglet游戏引擎仿真PPO算法
+	
+	\section{三维机械臂环境中的PPO算法实践}
+	[TODO] 基于unity游戏引擎仿真ppo算法
 	
 	\chapter{全文总结与展望}
 	
 	\section{全文总结}
-	本文以时域积分方程方法为研究背景，主要对求解时域积分方程的时间步进算法以及两层平面波快速算法进行了研究。
+	[TODO]
 	
 	\section{后续工作展望}
-	时域积分方程方法的研究近几年发展迅速，在本文研究工作的基础上，仍有以下方向值得进一步研究：
+	[TODO]
 	
 	\thesisacknowledgement
-	在攻读博士学位期间，首先衷心感谢我的导师XXX教授
+	[TODO]
 	
 	
 	\thesisloadbibliography[nocite]{reference}
@@ -359,15 +464,60 @@
 	
 	\thesisappendix
 	
-	\thesisloadachievement{publications}
-	
 	
 	\thesistranslationoriginal
-	\section{A Tight Upper Bound on Bit Error Rate}
-	
+
+	\begin{figure}[h]
+		\includegraphics[width=13cm]{./pic/ProximalPolicyOptimizationAlgorithms-01.jpg}
+	\end{figure}
+	\begin{figure}[h]
+		\includegraphics[width=14cm]{./pic/ProximalPolicyOptimizationAlgorithms-02.jpg}
+	\end{figure}
 	
 	\thesistranslationchinese
+	\begin{center}
+		\textbf{\large 近端策略优化算法}
+	\end{center}
+
+	\section{摘要}
+	本文提出一种新的基于策略梯度的强化学习算法，此算法交替地执行数据采样和策略优化过程，在数次与环境交互并取得批量采样数据之后，此算法会使用随机梯度下降法优化“代理”目标函数，如此循环往复。传统的策略梯度算法每采样一次数据就会执行一次梯度更新，我们提出了一种新的目标函数，可以采用多轮小批量数据进行梯度更新。我们提出的这种名为近端策略优化的算法，基于置信域策略优化算法发展而来，但与之相比更易于实现、泛化能力更强以及拥有更好的采样复杂度。我们在多个基准测试任务上测试了该算法，包括仿真机械运动和雅达利游戏，并且发现该算法取得了相比于其他在线策略梯度算法更好的性能，在采样复杂度、朴素性和时间复杂度上取得了很好的平衡。
 	
-	\section{基于多载波索引键控的正交频分多路复用系统模型}
+	\section{介绍}
+	近些年，强化学习领域出现了多种基于神经网络近似的算法，其中最具代表性的算法有：深度Q学习[Mni+15]、普通策略梯度算法[Mni+16]和置信域策略梯度算法。然而，这些算法在可扩展性、效率和鲁棒性上还有很大的提升空间。Q学习(采用函数模拟的)不仅在很多简单任务上表现很差，而且可解释性很弱，普通策略梯度算法效率和鲁棒性都无法令人满意；而置信域策略优化算法相对来说太过复杂，并且无法很好地兼容包含噪声(如随机失活)或者包含参数共享结构(策略函数与值函数共享或者多任务参数共享)的架构。
 	
+	本文旨在提出一种比TRPO算法拥有更高的效率和更可靠的性能的仅使用了一阶优化函数的高效算法。我们提出的目标函数使用裁剪概率比率来评估策略性能的下界。为了优化策略，我们交替地批量采样数据并用这些数据优化目标函数。
+	
+	我们在实验中对比了多种版本的代理目标函数，并且发现使用裁剪概率比率的版本表现最好。同时，我们也将该算法与其他文献中的算法进行了对比。在连续空间任务上，该算法比竞争算法表现都好。而在雅达利游戏上，该算法远远超出了A2C的表现，并在更低的复杂度上取得了与ACER类似的成绩。
+	
+	\section{背景知识：策略优化理论}
+	\subsection{策略梯度算法}
+	策略梯度算法使用一个评价函数来评价策略梯度，并且使用随机梯度下降对该评价函数进行优化。最广泛使用的评价函数如式(\ref{teq1})所示。
+	\begin{equation}
+		\label{teq1}
+		\hat{g}=\hat{E}_t[\nabla_\theta log\pi_\theta(a_t|s_t)\hat{A_t}]
+	\end{equation}
+	其中$\pi_\theta$是一个随机变量，表示策略(policy)，而$\hat{A_t}$则是在时间步$t$时的优势评价指标。数学期望$\hat{E}_t$表示有限数量样本的经验平均值，它通常在数据采样和优化时变化。为了能够使用自动求导来解决问题，通常需要构造一个目标函数，这个目标函数的梯度便是策略梯度评价指标；评价指标$\hat{g}$可以通过对以下目标函数求导得到：
+	\begin{equation}
+		\label{teq2}
+		L^{PG}(\theta)=\hat{E}_t[log\pi_\theta(a_t|s_t)\hat{A_t}]
+	\end{equation}
+	尽管我们希望损失函数$L^{PG}$在多步以后沿着同样的轨迹优化，但事实却并不如此，这种优化方式往往引起巨量的策略更新。
+	
+	\subsection{基于置信域的方法}
+	在TRPO算法中，最大化目标函数时，使用策略更新的尺寸来约束，具体地，
+	\begin{equation*}
+	\label{teq3}
+	\begin{aligned}
+		& \underset{\theta}{\text{maximize}}& & \hat{E}_t[\frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_{old}}(a_t|s_t)}\hat{A_t}]\\
+		& \text{subject to }& &\hat{E}_t[KL[\pi_{\theta_{old}}(\cdot|s_t),\pi_\theta(\cdot|s_t)]]\leq \delta
+	\end{aligned}
+	\end{equation*}
+	其中，$\theta_{old}$是更新前的策略参数向量。在对目标函数进行线性近似并对约束条件进行二阶近似后，这个问题可以使用共轭梯度算法来有效地解决。
+	
+	TRPO算法在进行策略调整时，使用了一个惩罚项来代替约束，也就是说，求解包含系数$\beta$的非约束最优化问题
+	\begin{equation}
+		\label{teq4}
+		\underset{\theta}{\text{maximize }} \hat{E}_t[\frac{\pi_\theta(a_t|s_t)}{\pi_{\theta_{old}}(a_t|s_t)}\hat{A_t}]-\beta KL[\pi_{\theta_{old}}(\cdot|s_t),\pi_\theta(\cdot|s_t)]
+	\end{equation}
+	该问题成立的前提是，存在这样一个事实：一个确定的代理目标函数(通过计算状态的KL散度而不是其平均值)形成了策略$\pi$的下界。TRPO选用一个强约束条件而不是惩罚项来求解最优化问题，这是因为很难确定一个能够在多种问题上都取得很好效果的$\beta$值——甚至在单一问题上也很难确定合适的$\beta$值。因此，为了达到我们使用一阶函数改进TRPO算法的目标，实践证明，简单地选取一个固定的系数$\beta$然后去优化惩罚目标式(\ref{teq4})是远远不够的，我们需要进行更多的改动。
 \end{document}

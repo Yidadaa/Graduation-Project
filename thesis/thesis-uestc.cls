@@ -468,7 +468,7 @@ bottom=3cm, bindingoffset=0cm]{geometry}
 
 \newcommand{\chinesedegreename}{硕士}
 \DeclareOption{bachelor}{
-  \renewcommand{\chinesedegreename}{本科}
+  \renewcommand{\chinesedegreename}{学士}
 }
 
 \DeclareOption{master}{
