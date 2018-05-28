@@ -24,7 +24,7 @@ from arm_env import ArmEnv
 
 EP_MAX = 2000
 EP_LEN = 300
-N_WORKER = 4                # parallel workers
+N_WORKER = 4          # parallel workers
 GAMMA = 0.9                 # reward discount factor
 A_LR = 0.0001               # learning rate for actor
 C_LR = 0.0005                # learning rate for critic
