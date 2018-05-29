@@ -29,10 +29,13 @@ GAMMA = 0.9                 # reward discount factor
 A_LR = 0.0001               # learning rate for actor
 C_LR = 0.0005                # learning rate for critic
 MIN_BATCH_SIZE = 64         # minimum batch size for updating PPO
-UPDATE_STEP = 5             # loop update operation n-steps
+UPDATE_STEP = 10             # loop update operation n-steps
 EPSILON = 0.2               # Clipped surrogate objective
 MODE = ['easy', 'hard']
 n_model = 1
+
+KL_TARGET = 0.01
+LAMBDA = 0.5
 
 env = ArmEnv(mode=MODE[n_model])
 S_DIM = env.state_dim
@@ -65,6 +68,10 @@ class PPO(object):
         # ratio = tf.exp(pi.log_prob(self.tfa) - oldpi.log_prob(self.tfa))
         ratio = pi.prob(self.tfa) / (oldpi.prob(self.tfa) + 1e-5)
         surr = ratio * self.tfadv   # surrogate loss
+        self.lambda_input = tf.placeholder(tf.float32, None, 'lambda')
+        kl = tf.distributions.kl_divergence(oldpi, pi)
+        self.kl_mean = tf.reduce_mean(kl)
+        # self.aloss = -tf.reduce_mean(surr - self.lambda_input * kl)
 
         self.aloss = -tf.reduce_mean(tf.minimum(
             surr,
@@ -83,6 +90,7 @@ class PPO(object):
                 data = np.vstack(data)
                 s, a, r = data[:, :S_DIM], data[:, S_DIM: S_DIM + A_DIM], data[:, -1:]
                 adv = self.sess.run(self.advantage, {self.tfs: s, self.tfdc_r: r})
+                adv = (adv - adv.mean()) / (adv.std() + 1e-5)
                 [self.sess.run(self.atrain_op, {self.tfs: s, self.tfa: a, self.tfadv: adv}) for _ in range(UPDATE_STEP)]
                 [self.sess.run(self.ctrain_op, {self.tfs: s, self.tfdc_r: r}) for _ in range(UPDATE_STEP)]
                 UPDATE_EVENT.clear()        # updating finished

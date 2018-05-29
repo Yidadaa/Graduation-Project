@@ -76,6 +76,7 @@ class ArmEnv(object):
             self.arm_info[1, 2:4] = self.arm_info[0, 2:4] + arm2dx_dy  # (x2, y2)
 
             self.point_info[:] = self.point_info_init
+            # self.point_info[:] = np.random.random_integers(0, 400, 2)
         return self._get_state()[0]
 
     def render(self):
@@ -216,3 +217,7 @@ class Viewer(pyglet.window.Window):
 
 
 
+if __name__ == '__main__':
+    # 测试代码
+    env = ArmEnv('easy')
+    env.reset()

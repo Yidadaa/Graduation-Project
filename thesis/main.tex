@@ -7,13 +7,29 @@
 
 \usepackage{listings}
 \usepackage{fontspec}  
-\setmonofont{Consolas}  
+\setmonofont[Mapping={}]{Inziu Iosevka Slab J}	%英文引号之类的正常显示，相当于设置英文字体
 
+\lstset{
+	columns=fixed,       
+	numbers=left,
+	numbersep=5pt,
+	numberstyle=\tiny\color{gray},
+	frame=none,
+	backgroundcolor=\color[RGB]{245,245,244},
+	keywordstyle=\color[RGB]{40,40,255},
+	numberstyle=\footnotesize\color{darkgray},           
+	commentstyle=\it\color[RGB]{0,96,96},
+	stringstyle=\color[RGB]{128,0,0},
+	showstringspaces=false,
+	language=Python,
+	basicstyle=\footnotesize\ttfamily,
+	breaklines=true
+}
 
 \begin{document}
 	
 	\begin{chineseabstract}
-		近年来，强化学习技术在人工智能、机器学习和自动控制等领域中得到了广泛的研究和应用，并被认为是设计智能系统的核心技术之一。本文尝试将虚拟现实技术中的Unity引擎与强化学习算法的训练结合起来，使得强化学习的训练时间大幅度减少。同时通过Unity强大的物理引擎尽可能地拟合真实环境，从而使得训练出的强化学习模型无需经过细致调参优化就可以很好地迁移应用到实体机械环境上。
+		近年来，强化学习技术在人工智能、机器学习和自动控制等领域中得到了广泛的研究和应用，并被认为是设计智能系统的核心技术之一。本文尝试将虚拟现实技术中的Unity引擎与强化学习算法的训练结合起来，并通过多线程训练等优化手段，使得强化学习的训练时间大幅度减少。同时通过Unity强大的物理引擎尽可能地拟合真实环境，从而使得训练出的强化学习模型无需经过细致调参优化就可以很好地迁移应用到实体机械环境上。
 		
 		\chinesekeyword{强化学习，虚拟现实，机器控制算法}
 	\end{chineseabstract}
@@ -339,7 +355,7 @@
 	\end{table}
 	除了基于值函数的DRL和基于策略梯度的DRL之外，还可以通过增加额外的人工监督来促进策略搜索的过程，即为基于搜索与监督的DRL的核心思想。蒙特卡洛树搜索(Monte Carlo Tree Search，MCTS)作为一种经典的启发式策略搜索方法，被广泛用于游戏博弈问题中的行动规划。因此在基于搜索与监督的DRL方法中，策略搜索一般是通过MCTS来完成的。例如Google公司的AlphaGo围棋算法就将深度神经网络和MCTS相结合，并取得了卓越的成就。
 	
-	\section{近端梯度优化算法}
+	\section{近端梯度优化算法}\label{ppo}
 	\subsection{算法思路}\label{ppocontent}
 	传统策略梯度算法存在一个两难问题：在更新策略参数时，需要确定更新步长(即学习率)，如果步长过小，则更新速度过慢，时间开销将会难以忍受；而如果步长过大，学习到的策略效果过差，继续在此策略中进一步采样数据进行训练，会使策略的效果越来越差，引起恶性循环。因此，如何确定合适的梯度更新步长，是一个亟待解决的问题。为了解决此问题，TRPO算法强制限制同一批次数据上新旧两种预测分布的KL差异，从而避免导致策略发生太大改变，并提出了以下目标函数：
 	\begin{equation*}
@@ -381,12 +397,12 @@
 	PPO算法中，数据采样与优化交替进行，传统的策略梯度方法，每进行一次数据采样都要执行一次优化，而PPO算法则先进行多次数据采样，然后从采样得到的数据中随机抽取小批量数据，然后再执行优化。算法的训练过程如\ref{al1}所示。
 	
 	\begin{algorithm}[H]
-		\caption{近端策略优化算法}
+		\caption{近端策略优化算法(动态调整$\lambda$版本)}
 		\label{al1}
 		\For{$i\in{1, \dots, N}$}{
 			在$T$个时间步内执行策略$\pi_\theta$，收集采样数据${s_t, a_t, r_t}$\\
 			评估优势$\hat{A_t}=\sum_{t'>t}\gamma^{t'-t}r_{t'}-V_\phi(s_t)$\\
-			更新策略$\pi_{old}\leftarrow\pi_\theta$
+			更新策略$\pi_{old}\leftarrow\pi_\theta$\\
 			\For{$j\in{1, \dots, M}$}{
 				$J_{PPO}(\theta)=\sum_{t=1}^{T}\frac{\pi_\theta(a_t|s_t}{\pi_{old}(a_t|s_t)}\hat{A_t}-\lambda KL[\pi_{old}|\pi_\theta]$\\
 				根据目标函数$J_{PPO}(\theta)$更新$\theta$
@@ -404,7 +420,26 @@
 		}
 	\end{algorithm}
 	
-	PPO算法基于行动者评论家架构，在训练过程中，行动者要最大化目标函数$J_{PPO}(\theta)$，评价者则要最小化误差$L_{BL}(\phi)$(Temporal-difference Error, TD Error)。同时$J_{PPO}(\theta)$中的超参数$\lambda$按照\ref{ppocontent}节中所述进行动态调整，从而使算法的性能达到最佳。
+	PPO算法是典型的行动者评论家架构，在训练过程中，行动者要最大化目标函数$J_{PPO}(\theta)$，评价者则要最小化误差$L_{BL}(\phi)$(Temporal-difference Error, TD Error)。同时$J_{PPO}(\theta)$中的超参数$\lambda$按照\ref{ppocontent}节中所述进行动态调整，从而使算法的性能达到最佳。
+	
+	\begin{algorithm}[H]
+		\caption{近端策略优化算法(裁剪概率比值版本)}
+		\label{al2}
+		\For{$i\in{1, \dots, N}$}{
+			在$T$个时间步内执行策略$\pi_\theta$，收集采样数据${s_t, a_t, r_t}$\\
+			评估优势$\hat{A_t}=\sum_{t'>t}\gamma^{t'-t}r_{t'}-V_\phi(s_t)$\\
+			更新策略$\pi_{old}\leftarrow\pi_\theta$\\
+			\For{$j\in{1, \dots, M}$}{
+				$J_{PPO}(\theta)=\sum_{t=1}^{T}\frac{\pi_\theta(a_t|s_t}{\pi_{old}(a_t|s_t)}\hat{A_t}-\lambda KL[\pi_{old}|\pi_\theta]$\\
+				根据目标函数$J_{PPO}(\theta)$更新$\theta$
+			}
+			\For{$j\in{1, \dots, B}$}{
+				$L_{CLIP}(\theta) = \hat{\mathbb{E}}_t [\min(r_t(\theta) \hat{A}_t, \text{clip}(r_t(\theta), 1 - \epsilon, 1+\epsilon) \hat{A}_t)]$\\
+				根据目标函数$L_{CLIP}(\phi)$更新$\phi$
+			}
+		}
+	\end{algorithm}
+	算法\ref{al2}是对\ref{al1}的改进版本，因为\ref{al1}引入的惩罚项系数$\lambda$十分难确定，即使使用了\ref{al1}中的自适应算法，效果也不尽如人意，而裁剪概率比值版本的效果则相对好得多，这一点将会在后续的实验部分进行验证。
 	
 	\chapter{强化学习算法实践}
 	\section{强化学习常用仿真环境对比}
@@ -498,14 +533,73 @@
 		\end{tabular}
 	\end{table}
 
-	\section{PPO算法的keras实现}
-	[TODO]使用keras实现PPO算法
+	\section{PPO算法的具体实现}
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=14cm]{./pic/ppo.jpg}
+		\caption{PPO网络结构}
+		\label{ppofig}
+	\end{figure}
+	根据\ref{ppo}节所示的近端策略优化算法过程，搭建图\ref{ppofig}所示的网络。其中状态值函数采用一个全连接网络进行模拟，中间层节点为100个：
+	\begin{lstlisting}
+self.state_input = tf.placeholder(tf.float32, [None, S_DIM], 'state')
+dense = tf.layers.dense(self.state_input, 100, tf.nn.relu)
+self.value = tf.layers.dense(dense, 1) # 值函数的近似网络
+	\end{lstlisting}
+	同样地，策略网络也使用了类似的结构，但是由于强化学习中的策略是一个概率分布，所以用均值(mean)和方差(std)来描述该分布，其均值和方差均使用包含200个节点的全连接网络进行模拟：
+	\begin{lstlisting}
+dense = tf.layers.dense(self.state_input, 200, tf.nn.relu, trainable=True)
+mu = A_BOUND * tf.layers.dense(dense, A_DIM, tf.nn.tanh, trainable=True)
+sigma = tf.layers.dense(dense, A_DIM, tf.nn.softplus, trainable=True)
+pi_norm_distribution = Normal(loc=mu, scale=sigma)
+	\end{lstlisting}
+	然后根据算法\ref{al2}中的$J_{PPO}(\theta)$和$L_{CLIP}(\phi)$确定行动者和评价者网络的损失函数，再定义其优化方式即可。
+	\begin{lstlisting}
+self.critic_loss = tf.reduce_mean(tf.square(self.advantage))
+self.critic_train_op = tf.train.AdamOptimizer(LR).minimize(self.critic_loss)
+self.actor_loss = - tf.reduce_mean(tf.minimum(surrogate, tf.clip_by_value(pi_ratio, 1 - EPSILON, 1 + EPSILON) * self.advantage_input))
+self.actor_train_op = tf.train.AdamOptimizer(LR).minimize(self.actor_loss)
+	\end{lstlisting}
+	本小节仅列出了关键部分网络部分的代码，完整代码见附录部分。
 	
 	\section{二维机械臂环境中的PPO算法实践}
-	为了验证
+	为了验证和优化上小节实现的PPO算法，本节将搭建一个二维的简易机械臂环境，并将PPO算法集成到该环境中，然后进行训练，对其训练效果进行评估。之后再使用各种优化方法对算法进行优化，为下一步在Unity环境中仿真奠下基础。
 	\subsection{架构设计}
-	\subsection{环境搭建}
+	首先需要构建2D机械臂环境，在此选用python下的一个2D图形引擎pyglet。OpenAI的gym环境的接口经过了历次迭代已经十分成熟了，因此本节的机械臂环境的接口将按照gym风格进行封装。
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=14cm]{./pic/2darm.jpg}
+		\caption{二维机械臂环境}
+		\label{2darm}
+	\end{figure}
+	图\ref{2darm}展示了该机械臂环境的接口，这是一个简单的两关节机械臂，围绕着图像中心的固定点旋转，它可以接受一个二维动作向量$(angle_1,angle_2)$，分别表示了两个关节在当前状态应当设定的角速度，每次执行动作之后，环境便返回一个动作向量$(hasOnPoint,arm1_x,arm1_y,arm2_x,arm2_y,p_x,p_y)$，分别表示机械臂末端是否已与目标点重合、机械臂一关节尾端坐标、机械臂二关节尾端坐标，目标点坐标\footnote{此环境中返回的坐标值均是经过归一化后的坐标值，归一化公式：$norm(x)=\frac{x}{width\ of\ window}, norm(y)=\frac{y}{height\ of\ window}$。例如默认窗口宽高为$400\times500$，坐标值为$(200,300)$，则返回坐标值为$(0.5,0.6)$。}。也就说，该环境包含了2维度的动作空间和7维度的状态空间，这意味着PPO网络的输入与输出也要设置为对应的值。
+	
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=14cm]{./pic/2darm-ppo.jpg}
+		\caption{二维机械臂环境中集成PPO算法}
+		\label{2darm-ppo}
+	\end{figure}
+
+	图\ref{2darm-ppo}展示了PPO算法与该机械臂环境的集成架构，由于该机械臂环境直接采用python中的一个GUI框架渲染而成，所以PPO可以直接像调用函数一样在训练时与该环境实时交互，这一点与gym环境的使用是类似的。就如算法\ref{al2}中所示，在训练时，PPO算法会先从环境中执行$N$次动作，这些动作对应的状态整合之后便作为网络权重训练的批数据，在实际训练时，使用Adam优化器对策略网络和值网络进行优化，每轮优化轮次为$M$，优化完成后进入下一轮采样-优化的循环，直至训练结束。
 	\subsection{训练结果}
+	\subsubsection{两种目标函数效果对比}
+	上文\ref{ppocontent}节提到了PPO算法有两种可选的目标函数，一种是带惩罚项的动态$\lambda$调整目标函数，另一种是使用裁剪概率比率限制策略更新幅度的目标函数。
+	\subsubsection{探究随机化目标点对训练结果的影响}
+	在前面的训练过程中，目标点的选取始终是固定的，每次环境重置(reset)后会重新随机放置机械臂的位置，这种做法存在一个弊端，由于环境返回的状态向量也包含了目标点的坐标，如果每次目标点位置都固定，则所有的数据后两维均是相同的。于是考虑在每次初始化时，随机选择目标点的位置。
+	\begin{figure}[h]
+		\centering
+		\subfigure[初始化时，机械臂随机摆放，目标点固定]{
+			\includegraphics[width=14cm]{./pic/fixed-point.jpg}
+		}
+		\subfigure[初始化时，机械臂随机摆放，目标点随机出现]{
+			\includegraphics[width=14cm]{./pic/random-point.jpg}
+		}
+		\caption{目标点随机化示意图}
+		\label{fixed-point}
+	\end{figure}
+	\subsubsection{探究归一化对训练结果的影响}
+	\subsubsection{启用多线程加速训练过程}
 	\subsection{总结}
 	
 	\section{三维机械臂环境中的PPO算法实践}
