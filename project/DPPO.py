@@ -7,8 +7,6 @@ Restart workers once PPO is updated.
 The global PPO updating rule is adopted from DeepMind's paper (DPPO):
 Emergence of Locomotion Behaviours in Rich Environments (Google Deepmind): [http://adsabs.harvard.edu/abs/2017arXiv170702286H]
 
-View more on my tutorial website: https://morvanzhou.github.io/tutorials
-
 Dependencies:
 tensorflow r1.2
 gym 0.9.2
@@ -20,15 +18,16 @@ import numpy as np
 import matplotlib.pyplot as plt
 import threading, queue
 from arm_env import ArmEnv
+import json, time
 
 
-EP_MAX = 2000
-EP_LEN = 300
+EP_MAX = 1000
+EP_LEN = 200
 N_WORKER = 4          # parallel workers
 GAMMA = 0.9                 # reward discount factor
 A_LR = 0.0001               # learning rate for actor
 C_LR = 0.0005                # learning rate for critic
-MIN_BATCH_SIZE = 64         # minimum batch size for updating PPO
+MIN_BATCH_SIZE = 32         # minimum batch size for updating PPO
 UPDATE_STEP = 10             # loop update operation n-steps
 EPSILON = 0.2               # Clipped surrogate objective
 MODE = ['easy', 'hard']
@@ -168,6 +167,7 @@ class Worker(object):
 
 
 if __name__ == '__main__':
+    start = time.clock()
     GLOBAL_PPO = PPO()
     UPDATE_EVENT, ROLLING_EVENT = threading.Event(), threading.Event()
     UPDATE_EVENT.clear()    # no update now
@@ -192,6 +192,14 @@ if __name__ == '__main__':
     plt.plot(np.arange(len(GLOBAL_RUNNING_R)), GLOBAL_RUNNING_R)
     plt.xlabel('Episode'); plt.ylabel('Moving reward'); plt.ion(); plt.show()
     env.set_fps(30)
+
+    counted = time.clock() - start
+    with open('./data/dppo.json', 'w') as f:
+        json.dump({
+            'ep_r': GLOBAL_RUNNING_R,
+            'time': counted
+        }, f)
+
     while True:
         s = env.reset()
         for t in range(400):

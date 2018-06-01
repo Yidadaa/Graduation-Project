@@ -6,7 +6,8 @@
 \author{张义飞}
 
 \usepackage{listings}
-\usepackage{fontspec}  
+\usepackage{fontspec}
+\usepackage{booktabs}  
 \setmonofont[Mapping={}]{Inziu Iosevka Slab J}	%英文引号之类的正常显示，相当于设置英文字体
 
 \lstset{
@@ -333,24 +334,18 @@
 	\begin{table}[h]
 		\caption{不同的DRL模型在57个Atari游戏上的平均耗时以及游戏性能的提升}
 		\label{tb1}
-		\begin{tabular}{|c|c|c|c|}
-			\hline
+		\begin{tabular}{cccc}
+			\toprule[1.5pt]
 			模型 & 训练条件 & 训练时间/天 & 平均性能提升 \\
 			\hline
 			DQN & GPU & 8 & 121.9\% \\
-			\hline
 			DDQN & GPU & 8 & 332.9\% \\
-			\hline
 			Dueling DDQN & GPU & 8 & 343.8\% \\
-			\hline
 			Prioritized DQN & GPU & 8 & 463.6\% \\
-			\hline
 			A3C,FF & CPU & 1 & 344.1\% \\
-			\hline
 			A3C,FF & CPU & 4 & 496.8\% \\
-			\hline
 			A3C,LSTM & CPU & 4 & 623.0\% \\
-			\hline
+			\bottomrule[1.5pt]
 		\end{tabular}
 	\end{table}
 	除了基于值函数的DRL和基于策略梯度的DRL之外，还可以通过增加额外的人工监督来促进策略搜索的过程，即为基于搜索与监督的DRL的核心思想。蒙特卡洛树搜索(Monte Carlo Tree Search，MCTS)作为一种经典的启发式策略搜索方法，被广泛用于游戏博弈问题中的行动规划。因此在基于搜索与监督的DRL方法中，策略搜索一般是通过MCTS来完成的。例如Google公司的AlphaGo围棋算法就将深度神经网络和MCTS相结合，并取得了卓越的成就。
@@ -520,16 +515,16 @@
 	\begin{table}[h]
 		\caption{Gym、ROS、Unity三者特性对比}
 		\label{compare}
-		\begin{tabular}{|c|c|c|c|c|c|}
-			\hline
+		\begin{tabular}{cccccc}
+			\toprule[1.5pt]
 			架构 & 复杂度 & 易用性 & 物理引擎 & 3D模型导入 & 专业性 \\
 			\hline
 			Gym & 低 & 高 & 2D & 不支持 & 高 \\
-			\hline
+			
 			ROS & 高 & 低 & 3D & 支持 & 高 \\
-			\hline
+			
 			Unity & 低 & 高 & 2D/3D & 支持 & 中 \\ 
-			\hline
+			\bottomrule[1.5pt]
 		\end{tabular}
 	\end{table}
 
@@ -582,11 +577,44 @@ self.actor_train_op = tf.train.AdamOptimizer(LR).minimize(self.actor_loss)
 	\end{figure}
 
 	图\ref{2darm-ppo}展示了PPO算法与该机械臂环境的集成架构，由于该机械臂环境直接采用python中的一个GUI框架渲染而成，所以PPO可以直接像调用函数一样在训练时与该环境实时交互，这一点与gym环境的使用是类似的。就如算法\ref{al2}中所示，在训练时，PPO算法会先从环境中执行$N$次动作，这些动作对应的状态整合之后便作为网络权重训练的批数据，在实际训练时，使用Adam优化器对策略网络和值网络进行优化，每轮优化轮次为$M$，优化完成后进入下一轮采样-优化的循环，直至训练结束。
-	\subsection{训练结果}
-	\subsubsection{两种目标函数效果对比}
-	上文\ref{ppocontent}节提到了PPO算法有两种可选的目标函数，一种是带惩罚项的动态$\lambda$调整目标函数，另一种是使用裁剪概率比率限制策略更新幅度的目标函数。
+	\subsection{实验结果}
+	\subsubsection{两种目标函数效果对比}\label{sec:kl_vs_clip}
+	上文\ref{ppocontent}节提到了PPO算法有两种可选的目标函数，一种是带惩罚项的动态$\lambda$调整目标函数$L_{BL}(\theta)$，另一种是使用裁剪概率比率限制策略更新幅度的目标函数$L_{CLIP}(\theta)$。本节主要对两种目标函数的效果进行对比。
+	\begin{figure}[h]
+		\centering
+		\subfigure[两者的reward对比]{
+			\includegraphics[width=7cm]{./pic/kl-vs-clip.pdf}
+		}
+		\subfigure[$L_{BL}(\theta)$中$\lambda$随着训练进行不断变化]{
+			\includegraphics[width=7cm]{./pic/kl-lambda.pdf}
+		}
+		\caption{}
+		\label{kl-vs-clip}
+	\end{figure}
+	
+	从图\ref{kl-vs-clip}(a)可以看出，训练前期$L_{CLIP}(\theta)$的reward上升速度稍快一些，而且后期$L_{CLIP}(\theta)$的reward更加稳定，虽然$L_{BL}(\theta)$在后期的平均效果要更好，但是波动幅度很大，由\ref{kl-vs-clip}(b)可知，超参数$\lambda$在训练后期波动很大，这是因为后期的策略更新幅度一般偏大，从而需要较大的惩罚项来限制这种波动。
+	
+	\ref{ppocontent}节中指出$L_{CLIP}(\theta)$的数据效率要比$L_{BL}(\theta)$更高，但由于本节搭建的二维机械臂环境比较简单，状态空间与动作空间维度都很小，$L_{CLIP}(\theta)$的优势并没有表现得特别突出，所以后文将继续对两者进行比较。
+	
+	\begin{figure}[h]
+		\centering
+		\subfigure[$L_{BL}(\theta)$中超参数$KL_{target}$对效果的影响]{
+			\includegraphics[width=7cm]{./pic/kl_target.pdf}
+		}
+		\subfigure[$L_{CLIP}(\theta)$中超参数$\epsilon$对效果的影响]{
+			\includegraphics[width=7cm]{./pic/clip_epsilon.pdf}
+		}
+		\caption{两种目标函数中超参数对训练效果的影响}
+		\label{hyperparams}
+	\end{figure}
+	此外两目标函数中均存在超参数，其中$L_{BL}(\theta)$中的$KL_{target}$直接影响了$\lambda$的动态调整过程，但如图\ref{hyperparams}(a)所示，该参数对训练结果的影响并不大；而$L_{CLIP}(\theta)$中的裁剪比率阈值$\epsilon$则更加敏感，从图\ref{hyperparams}(b)可以看出，随着阈值$\epsilon$的增大，后期的训练效果变得愈发不稳定，这是因为阈值$\epsilon$限制了策略更新的幅度，阈值$\epsilon$越大，策略更新幅度就越大，就越有可能训练出“坏”策略\footnote{策略更新幅度过大造成的影响详见\ref{ppocontent}节}，因此，选用$L_{CLIP}(\theta)$作为目标函数时，应当采用较小的$\epsilon$值。
+	
 	\subsubsection{探究随机化目标点对训练结果的影响}
 	在前面的训练过程中，目标点的选取始终是固定的，每次环境重置(reset)后会重新随机放置机械臂的位置，这种做法存在一个弊端，由于环境返回的状态向量也包含了目标点的坐标，如果每次目标点位置都固定，则所有的数据后两维均是相同的。于是考虑在每次初始化时，随机选择目标点的位置。
+	
+	图\ref{fixed-point}展示了随机选择目标点对训练效果的影响，由图\ref{fixed-point}(c)可以看到，随机初始化会大幅减缓网络效果的提升，这是因为每次训练都要重新对新的目标点进行优化，网络需要收集更多数据后才能取得比较好的效果，可以看到，600个训练周期以后，两者的训练效果便相差无几。
+	
+	随机初始化会大大提高网络的的泛化能力，通过对引入随机初始化前后的模型进行测试发现，引入后机械臂的移动更加顺滑，任务失败率也大大地降低了。
 	\begin{figure}[h]
 		\centering
 		\subfigure[初始化时，机械臂随机摆放，目标点固定]{
@@ -595,18 +623,86 @@ self.actor_train_op = tf.train.AdamOptimizer(LR).minimize(self.actor_loss)
 		\subfigure[初始化时，机械臂随机摆放，目标点随机出现]{
 			\includegraphics[width=14cm]{./pic/random-point.jpg}
 		}
-		\caption{目标点随机化示意图}
+		\subfigure[两种初始化方式对训练效果的影响对比]{
+			\includegraphics[width=14cm]{./pic/should_random_target.pdf}
+		}
+		\caption{目标点随机初始化的影响}
 		\label{fixed-point}
 	\end{figure}
-	\subsubsection{探究归一化对训练结果的影响}
-	\subsubsection{启用多线程加速训练过程}
+	\subsubsection{探究批规范化对训练结果的影响}
+	批规范化(Batch Normalization)\cite{Ioffe2015Batch}已被广泛证明可以很好解决神经网络训练过程中“梯度消失”的问题，并且可以显著地改善网络效果。本节将讨论在PPO算法的近似网络中添加批规范化对训练效果的影响。
+	
+	PPO算法中的行动者近似网络的优化会依赖优势函数$\hat{A_t}=\sum_{t'>t}\gamma^{t'-t}r_{t'}-V_\phi(s_t)$，即优势函数与状态向量构成了行动者近似网络的输入，于是考虑对优势函数进行规范化处理：
+	\begin{equation}
+		\label{eq30}
+		Norm(\hat{A_t})=\frac{\hat{A_t}-E(\hat{A_t})}{\sigma(\hat{A_t})}
+	\end{equation}
+	\begin{figure}[h]
+		\includegraphics[width=14cm]{./pic/should_norm_advantage.pdf}
+		\caption{规范化优势评价指标对训练效果的影响}
+		\label{norm}
+	\end{figure}
+	由图\ref{norm}可以看出，引入规范化会使前期的训练稍慢，同时后期训练出的模型表现会更加稳定。
+	\subsubsection{进一步优化}
+	为了进一步优化训练效果，本节将对模型中的更多参数进行讨论。在前面的实验过程中，发现每次训练时间耗时略长，于是考虑对实验的时间开销进行优化。
+	
+	\begin{table}[htbp]
+		\centering
+		\caption{影响运行时间的参数TOP10}
+		\begin{tabular}{cccl}
+			\toprule[1.5pt]
+			参数 & 值 & 每千次训练耗时(s) & 备注\\
+			\hline
+			$EP_{LEN}$ & 100   & 94.06173 & 每轮训练次数\footnotemark[1] \\
+			Batch Size & 128   & 117.7748 & 批采样数据大小\footnotemark[2] \\
+			Batch Size & 64    & 140.2311 & 批采样数据大小 \\
+			$KL_{target}$ & 0.1   & 147.4605 & $L_{BL}(\theta)$中的$
+			\lambda$约束\footnotemark[3] \\
+			$KL_{target}$ & 0.05  & 163.9781 & $L_{BL}(\theta)$中的$
+			\lambda$约束\\
+			Batch Size & 32    & 170.9606 & 批采样数据大小\\
+			$M$ & 10    & 171.3174 & 行动者网络更新次数 \footnotemark[3]\\
+			$\epsilon$ & 0.5   & 171.4027 & 裁剪阈值 \footnotemark[3]\\
+			$B$ & 10    & 171.5989 & 评价者网络更新次数 \footnotemark[3]\\
+			\hline
+			- & - & 225.4256 & 默认情况下的训练耗时，作为基准\\
+			\bottomrule[1.5pt]
+		\end{tabular}%
+		\label{params-table}%
+	\end{table}
+	\footnotetext[1]{相当于算法\ref{al1}中的$N$}
+	\footnotetext[2]{相当于算法\ref{al1}中的$T$}
+	\footnotetext[3]{相当于算法\ref{al2}中的同名参数}
+	
+	表\ref{params-table}列出了算法中不同参数的取值对训练时间耗时的影响，可以看到，每轮训练次数$EP_{LEN}$和批采样数据量大小Batch Size极大地影响了训练时间，同时从图\ref{other-hyperparams}可以看到，当$EP_{LEN}$和Batch Size均取到理想值时，不会对训练结果产生影响。不仅如此，Batch Size设置为128时，在训练后期比其他参数都更稳定。
+	
+	注意到$\epsilon$设置为0.5时，也可以减少训练耗时，但前文\ref{sec:kl_vs_clip}一节中提到，增大$\epsilon$会使训练效果变差，所以不应对$\epsilon$进行变动。
+	
+	因此可以确定，参数$EP_{LEN}=100$以及Batch Size=128时，可以兼顾训练效果和时间开销。经测试，优化后每千次训练耗时缩短到了90s左右，速度提升了约170\%。
+
+	\begin{figure}[h]
+		\centering
+		\subfigure[批采样数据量大小对训练结果的影响]{
+			\includegraphics[width=7cm]{./pic/BATCH.pdf}
+		}
+		\subfigure[每批次训练次数对训练结果的影响]{
+			\includegraphics[width=7cm]{./pic/EP_LEN.pdf}
+		}
+		\caption{其他参数对训练效果的影响}
+		\label{other-hyperparams}
+	\end{figure}
 	\subsection{总结}
+	本章节主要描述了在二维机械臂环境中的PPO算法实践过程，首先在pyglet图形引擎基础上搭建了一个包含7维度状态空间和2维度动作空间的简单机械臂环境，然后在此机械臂环境上进行了大量实验，对前文中提到的两种目标函数，以及算法中的参数对实验结果的影响进行了检验。实验结果表明，基于裁剪概率比率的目标函数$L_{CLIP}(\theta)$比基于动态惩罚项的目标函数$L_{BL}(\theta)$拥有更稳定的表现，其次初始环境参数的随机化以及对优势评价指标规范化同样可以提高模型稳定性，最后对模型中的其他参数进行了调优，使得模型训练的时间开销大幅减少。
+	
+	本章节的主要目的是为后续在更复杂的三维环境中实践PPO算法奠下基础，为之后的模型优化和架构设计积累经验。
 	
 	\section{三维机械臂环境中的PPO算法实践}
 	\subsection{架构设计}
-	\subsection{Unity环境搭建}
-	\subsection{训练结果}
+	[TODO]
+	\subsection{实验结果}
+	[TODO]
 	\subsection{总结}
+	[TODO]
 	
 	\chapter{全文总结与展望}
 	\section{全文总结}
@@ -631,7 +727,7 @@ self.actor_train_op = tf.train.AdamOptimizer(LR).minimize(self.actor_loss)
 	%
 	
 	\thesisappendix
-	
+	%\lstinputlisting{../project/simply_PPO.py}
 	
 	\thesistranslationoriginal
 

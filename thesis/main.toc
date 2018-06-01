@@ -43,38 +43,60 @@
  \cftsetpnumwidth {\widthof {15}-1pt} 
 \contentsline {subsection}{\numberline {2.3.3}异步优势行动者评论家算法}{15}{subsection.2.3.3}
  \cftsetpnumwidth {\widthof {16}-1pt} 
+\contentsline {section}{\numberline {2.4}近端梯度优化算法}{16}{section.2.4}
+\contentsline {subsection}{\numberline {2.4.1}算法思路}{16}{subsection.2.4.1}
  \cftsetpnumwidth {\widthof {17}-1pt} 
-\contentsline {chapter}{\numberline {第三章}强化学习算法实践}{17}{chapter.3}
-\contentsline {section}{\numberline {3.1}强化学习常用仿真环境对比}{17}{section.3.1}
-\contentsline {subsection}{\numberline {3.1.1}OpenAI Gym工具集}{17}{subsection.3.1.1}
-\contentsline {subsection}{\numberline {3.1.2}Robot Operating System(ROS)平台}{17}{subsection.3.1.2}
  \cftsetpnumwidth {\widthof {18}-1pt} 
+\contentsline {subsection}{\numberline {2.4.2}训练过程}{18}{subsection.2.4.2}
  \cftsetpnumwidth {\widthof {19}-1pt} 
-\contentsline {subsection}{\numberline {3.1.3}Unity游戏引擎}{19}{subsection.3.1.3}
-\contentsline {subsection}{\numberline {3.1.4}三者特性对比}{19}{subsection.3.1.4}
  \cftsetpnumwidth {\widthof {20}-1pt} 
-\contentsline {section}{\numberline {3.2}基于A3C架构的近端梯度优化算法}{20}{section.3.2}
-\contentsline {section}{\numberline {3.3}二维机械臂环境中的PPO算法实践}{20}{section.3.3}
-\contentsline {section}{\numberline {3.4}三维机械臂环境中的PPO算法实践}{20}{section.3.4}
+\contentsline {chapter}{\numberline {第三章}强化学习算法实践}{20}{chapter.3}
+\contentsline {section}{\numberline {3.1}强化学习常用仿真环境对比}{20}{section.3.1}
+\contentsline {subsection}{\numberline {3.1.1}OpenAI Gym工具集}{20}{subsection.3.1.1}
+\contentsline {subsection}{\numberline {3.1.2}Robot Operating System(ROS)平台}{20}{subsection.3.1.2}
  \cftsetpnumwidth {\widthof {21}-1pt} 
-\contentsline {chapter}{\numberline {第四章}全文总结与展望}{21}{chapter.4}
-\contentsline {section}{\numberline {4.1}全文总结}{21}{section.4.1}
-\contentsline {section}{\numberline {4.2}后续工作展望}{21}{section.4.2}
-\setcounter {tocdepth}{0}
  \cftsetpnumwidth {\widthof {22}-1pt} 
-\contentsline {chapter}{致\hspace {12pt}谢}{22}{chapter*.15}
+\contentsline {subsection}{\numberline {3.1.3}Unity游戏引擎}{22}{subsection.3.1.3}
+\contentsline {subsection}{\numberline {3.1.4}三者特性对比}{22}{subsection.3.1.4}
  \cftsetpnumwidth {\widthof {23}-1pt} 
-\contentsline {chapter}{参考文献}{23}{chapter*.16}
+\contentsline {section}{\numberline {3.2}PPO算法的具体实现}{23}{section.3.2}
  \cftsetpnumwidth {\widthof {24}-1pt} 
-\contentsline {chapter}{附录}{24}{chapter*.17}
+\contentsline {section}{\numberline {3.3}二维机械臂环境中的PPO算法实践}{24}{section.3.3}
+\contentsline {subsection}{\numberline {3.3.1}架构设计}{24}{subsection.3.3.1}
  \cftsetpnumwidth {\widthof {25}-1pt} 
-\contentsline {chapter}{外文资料原文}{25}{chapter*.18}
+\contentsline {subsection}{\numberline {3.3.2}实验结果}{25}{subsection.3.3.2}
+\contentsline {subsubsection}{\numberline {3.3.2.1}两种目标函数效果对比}{25}{subsubsection.3.3.2.1}
  \cftsetpnumwidth {\widthof {26}-1pt} 
+\contentsline {subsubsection}{\numberline {3.3.2.2}探究随机化目标点对训练结果的影响}{26}{subsubsection.3.3.2.2}
  \cftsetpnumwidth {\widthof {27}-1pt} 
-\contentsline {chapter}{外文资料译文}{27}{chapter*.21}
-\contentsline {section}{\numberline {1}摘要}{27}{section.4.1}
-\contentsline {section}{\numberline {2}介绍}{27}{section.4.2}
+\contentsline {subsubsection}{\numberline {3.3.2.3}探究批规范化对训练结果的影响}{27}{subsubsection.3.3.2.3}
  \cftsetpnumwidth {\widthof {28}-1pt} 
-\contentsline {section}{\numberline {3}背景知识：策略优化理论}{28}{section.4.3}
-\contentsline {subsection}{\numberline {3.1}策略梯度算法}{28}{subsection.4.3.1}
-\contentsline {subsection}{\numberline {3.2}基于置信域的方法}{28}{subsection.4.3.2}
+\contentsline {subsubsection}{\numberline {3.3.2.4}进一步优化}{28}{subsubsection.3.3.2.4}
+ \cftsetpnumwidth {\widthof {29}-1pt} 
+\contentsline {subsection}{\numberline {3.3.3}总结}{29}{subsection.3.3.3}
+\contentsline {section}{\numberline {3.4}三维机械臂环境中的PPO算法实践}{29}{section.3.4}
+\contentsline {subsection}{\numberline {3.4.1}架构设计}{29}{subsection.3.4.1}
+\contentsline {subsection}{\numberline {3.4.2}实验结果}{29}{subsection.3.4.2}
+\contentsline {subsection}{\numberline {3.4.3}总结}{29}{subsection.3.4.3}
+ \cftsetpnumwidth {\widthof {30}-1pt} 
+\contentsline {chapter}{\numberline {第四章}全文总结与展望}{30}{chapter.4}
+\contentsline {section}{\numberline {4.1}全文总结}{30}{section.4.1}
+\contentsline {section}{\numberline {4.2}后续工作展望}{30}{section.4.2}
+\setcounter {tocdepth}{0}
+ \cftsetpnumwidth {\widthof {31}-1pt} 
+\contentsline {chapter}{致\hspace {12pt}谢}{31}{chapter*.26}
+ \cftsetpnumwidth {\widthof {32}-1pt} 
+\contentsline {chapter}{参考文献}{32}{chapter*.27}
+ \cftsetpnumwidth {\widthof {33}-1pt} 
+\contentsline {chapter}{附录}{33}{chapter*.28}
+ \cftsetpnumwidth {\widthof {34}-1pt} 
+\contentsline {chapter}{外文资料原文}{34}{chapter*.29}
+ \cftsetpnumwidth {\widthof {35}-1pt} 
+ \cftsetpnumwidth {\widthof {36}-1pt} 
+\contentsline {chapter}{外文资料译文}{36}{chapter*.32}
+\contentsline {section}{\numberline {1}摘要}{36}{section.4.1}
+\contentsline {section}{\numberline {2}介绍}{36}{section.4.2}
+ \cftsetpnumwidth {\widthof {37}-1pt} 
+\contentsline {section}{\numberline {3}背景知识：策略优化理论}{37}{section.4.3}
+\contentsline {subsection}{\numberline {3.1}策略梯度算法}{37}{subsection.4.3.1}
+\contentsline {subsection}{\numberline {3.2}基于置信域的方法}{37}{subsection.4.3.2}

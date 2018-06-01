@@ -1,22 +1,117 @@
 from matplotlib import pyplot as plt
+from matplotlib import rcParams
 import json
+import os
+
+rcParams['font.family'] = 'Times New Roman'
+font1 = {
+    'family': 'STSong',
+    'size': 12
+}
 
 
-with open('./clip_data.json', 'r') as f:
-    clip_data = json.load(f)
+def picpath(filename):
+    return '../thesis/pic/{}.pdf'.format(filename)
 
-with open('./kl_pen_data.json', 'r') as f:
-    kl_data = json.load(f)
 
-N = len(clip_data['ep_r'])
+def loadjson(filename):
+    with open('./data/{}'.format(filename), 'r') as fp:
+        current_data = json.load(fp)
+    return current_data
 
-plt.figure(1)
-ax1 = plt.subplot(211)
-ax2 = plt.subplot(212)
+def collect_data_by_group(group_names):
+    data = {}
+    files = os.listdir('./data')
 
-plt.sca(ax1)
-# plt.plot(clip_data['ep_r'])
-plt.plot(kl_data['ep_r'])
-plt.sca(ax2)
-plt.plot(kl_data['lambda'])
-plt.show()
+    for name in group_names:
+        data[name] = []
+        for f in files:
+            if name in f:
+                data[name].append(loadjson(f))
+    return data
+
+def setlabel(ax):
+    # ax.set_xlabel('episode')
+    # ax.set_ylabel('reward')
+    ax.legend(prop=font1)
+
+
+def plot_all():
+    files = os.listdir('./data')
+    plt.figure(figsize=(800, 600))
+
+    figs = {}
+
+    i = 0
+    for f in files:
+        current_data = loadjson(f)
+        name = list(current_data['config'])[0]
+        if name not in figs:
+            i += 1
+            figs[name] = plt.subplot(3, 4, i)
+            figs[name].set_xlabel('episode')
+            figs[name].set_ylabel('reward')
+        figs[name].plot(current_data['ep_r'], label='{}={}'.format(
+            name, current_data['config'][name]))
+
+    for ax in figs.values():
+        ax.legend()
+
+    plt.show()
+
+
+def kl_vs_clip():
+    fig_id = 0
+    fig_size = (5, 2.5)
+    kl = loadjson('optimization_type__0.json')
+    clip = loadjson('optimization_type__1.json')
+    fig_1 = plt.figure(fig_id, fig_size)
+    fig_id += 1
+    ax = fig_1.add_subplot(111)
+    ax.plot(kl['ep_r'], label=r'$L_{BL}(\theta)$')
+    ax.plot(clip['ep_r'], label=r'$L_{CLIP}(\theta)$')
+    setlabel(ax)
+    fig_1.savefig(picpath('kl-vs-clip'))
+
+    fig_2 = plt.figure(2, fig_size)
+    fig_id += 1
+    ax = fig_2.add_subplot(111)
+    ax.plot(kl['lambda'], label=r'$\lambda$')
+    setlabel(ax)
+    fig_2.savefig(picpath('kl-lambda'))
+
+    data = collect_data_by_group(['kl_target', 'clip_epsilon', 'should_random_target', 'should_norm_advantage', 'EP_LEN', 'BATCH', 'test'])
+    labels = {
+        'kl_target': lambda value: r'$KL_{target}=$' + str(value),
+        'clip_epsilon': lambda value:r'$\epsilon$=' + str(value),
+        'should_random_target': lambda v: u'目标点随机出现' if v else u'目标点固定出现',
+        'should_norm_advantage': lambda v: u'执行规范化' if v else u'没有执行规范化',
+        'EP_LEN': lambda v: r'$EP_{LEN}=$' + str(v),
+        'BATCH': lambda v: 'Batch Size=' + str(v),
+        'test': lambda x: '优化后'
+    }
+    for name, value in data.items():
+        fig_id += 1
+        fig_size = (5, 2.5) if name not in ['should_random_target', 'should_norm_advantage'] else (10, 2.5)
+        fig = plt.figure(fig_id, fig_size)
+        ax = fig.add_subplot(111)
+        for v in value:
+            ax.plot(v['ep_r'], label=labels[name](v['config'][name]))
+        setlabel(ax)
+        fig.savefig(picpath(name))
+
+def params_table():
+    files = os.listdir('./data')
+    table = []
+    for f in files:
+        data = loadjson(f)
+        if 'config' not in list(data):
+            continue
+        name = list(data['config'])[0]
+        table.append([name, data['config'][name], data['time']])
+    with open('table.csv', 'w') as f:
+        f.write('\n'.join(map(lambda x: ','.join(map(str, x)), table)))
+
+if __name__ == '__main__':
+    kl_vs_clip()
+    # params_table()

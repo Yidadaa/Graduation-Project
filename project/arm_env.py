@@ -30,7 +30,7 @@ class ArmEnv(object):
     point_l = 15
     grab_counter = 0
 
-    def __init__(self, mode='easy'):
+    def __init__(self, mode='easy', should_random_target=False):
         # node1 (l, d_rad, x, y),
         # node2 (l, d_rad, x, y)
         self.mode = mode
@@ -40,6 +40,7 @@ class ArmEnv(object):
         self.point_info = np.array([250, 303])
         self.point_info_init = self.point_info.copy()
         self.center_coord = np.array(self.viewer_xy)/2
+        self.should_random_target = should_random_target
 
     def step(self, action):
         # action = (node1 angular v, node2 angular v)
@@ -75,8 +76,10 @@ class ArmEnv(object):
             self.arm_info[0, 2:4] = self.center_coord + arm1dx_dy  # (x1, y1)
             self.arm_info[1, 2:4] = self.arm_info[0, 2:4] + arm2dx_dy  # (x2, y2)
 
-            self.point_info[:] = self.point_info_init
-            # self.point_info[:] = np.random.random_integers(0, 400, 2)
+            if self.should_random_target:
+                self.point_info[:] = np.random.random_integers(0, 400, 2)
+            else:
+                self.point_info[:] = self.point_info_init
         return self._get_state()[0]
 
     def render(self):

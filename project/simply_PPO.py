@@ -149,7 +149,10 @@ class PPO(object):
 
 def train(config={}):
     tf.reset_default_graph()
-    env = ArmEnv(mode='easy')
+
+    should_random_target = 'should_random_target' in config.keys() and config['should_random_target']
+
+    env = ArmEnv(mode='easy', should_random_target=should_random_target)
     ppo = PPO(config)
     all_ep_r = []
     lambdas = []
@@ -225,13 +228,21 @@ if __name__ == '__main__':
         'C_UPDATE_STEPS': [10, 20, 50],
         'kl_target': [0.1, 0.01, 0.05],
         'clip_epsilon': [0.1, 0.2, 0.5],
-        'should_norm_advantage': [True, False]
+        'should_norm_advantage': [True, False],
+        'should_random_target': [True, False]
+    }
+    configs = {
+        'test': [1]
     }
     for attr, values in configs.items():
         for value in values:
             current_data = train({
                 attr: value,
-                'should_render': False # 关闭GUI显示
+                'should_render': False, # 关闭GUI显示
+                'optimization_type': 1,
+                'EP_LEN': 100,
+                'BATCH': 128,
+                'EP_MAX': 2000
             })
             # 保存实验数据
             with open('./data/{}__{}.json'.format(attr, value), 'w') as f:
