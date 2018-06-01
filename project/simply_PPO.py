@@ -15,9 +15,19 @@ import numpy as np
 import matplotlib.pyplot as plt
 import gym
 from arm_env import ArmEnv
+from unity_arm_env import UnityArmEnv
 import json, time
 from tqdm import tqdm
 
+class Plot():
+    def __init__(self):
+        plt.figure(figsize=(5, 3))
+        plt.ion()
+
+    def update(self, data):
+        plt.cla()
+        plt.plot(data)
+        plt.pause(0.05)
 
 class PPO(object):
 
@@ -139,7 +149,7 @@ class PPO(object):
     def choose_action(self, s):
         s = s[np.newaxis, :]
         a = self.sess.run(self.sample_op, {self.tfs: s})[0]
-        return np.clip(a, -2, 2)
+        return np.clip(a, -5, 5)
 
     def get_v(self, s):
         if s.ndim < 2:
@@ -147,12 +157,14 @@ class PPO(object):
         return self.sess.run(self.v, {self.tfs: s})[0, 0]
 
 
-def train(config={}):
+def train(config={}, use_unity_arm=False):
     tf.reset_default_graph()
 
     should_random_target = 'should_random_target' in config.keys() and config['should_random_target']
 
-    env = ArmEnv(mode='easy', should_random_target=should_random_target)
+    env = UnityArmEnv() if use_unity_arm else ArmEnv(mode='easy', should_random_target=should_random_target)
+    config['A_DIM'] = env.action_dim
+    config['S_DIM'] = env.state_dim
     ppo = PPO(config)
     all_ep_r = []
     lambdas = []
@@ -160,6 +172,8 @@ def train(config={}):
     should_render = 'should_render' in config.keys() and config['should_render']
 
     start = time.clock()
+
+    plot = Plot()
 
     for ep in tqdm(range(ppo.EP_MAX), desc='Training'):
         s = env.reset()
@@ -193,12 +207,10 @@ def train(config={}):
             all_ep_r.append(ep_r)
         else:
             all_ep_r.append(all_ep_r[-1]*0.9 + ep_r*0.1)
-        # print(
-        #     'Ep: %i' % ep,
-        #     "|Ep_r: %i" % ep_r,
-        #     ("|Lam: %.4f" %
-        #      ppo.METHOD['lam']) if ppo.METHOD['name'] == 'kl_pen' else '',
-        # )
+
+        print('Current Reward: ', ep_r)
+        plot.update(all_ep_r)
+
         if ppo.METHOD['name'] == 'kl_pen':
             lambdas.append(ppo.METHOD['lam'])
 
@@ -240,10 +252,10 @@ if __name__ == '__main__':
                 attr: value,
                 'should_render': False, # 关闭GUI显示
                 'optimization_type': 1,
-                'EP_LEN': 100,
+                'EP_LEN': 200,
                 'BATCH': 128,
                 'EP_MAX': 2000
-            })
+            }, use_unity_arm=True)
             # 保存实验数据
             with open('./data/{}__{}.json'.format(attr, value), 'w') as f:
                 json.dump(current_data, f)

@@ -6,62 +6,66 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
-using System.Threading;
-using System.Web;
-using UnityEngine;
 
-namespace AssemblyCSharp
+using UnityEngine;
+using MyUtils;
+
+namespace Server
 {
-	public class server
+	public class HTTPServer
 	{
-		public delegate void Callback(float[] angle);
-		public delegate float[] CallbackWithFloat();
+		public delegate float[] CallbackTypeOfStep(float[] action);
+		public delegate float[] CallbackTypeOfReset();
 		HttpListener listener = new HttpListener ();
+		Converter Converter = new Converter();
 		Boolean shutDown = false;
 
-		public server ()
+		private string port = "88";
+
+		public HTTPServer (string port)
 		{
 			listener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
-			listener.Prefixes.Add ("http://127.0.0.1:8888/");
+			listener.Prefixes.Add ("http://127.0.0.1:" + port + "/");
 		}
 
-		public void run(Callback setFunc, CallbackWithFloat getFunc) {
+		public HTTPServer ()
+		{
+			listener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
+			listener.Prefixes.Add ("http://127.0.0.1:" + port + "/");
+		}
+
+		public void run(CallbackTypeOfStep stepFunc, CallbackTypeOfReset resetFunc) {
 			if (shutDown)
 				return;
 
 			listener.Start ();
-			Debug.Log ("Server端已启动...");
+			Debug.Log ("Listening: port " + port);
 
 			HttpListenerContext ctx = listener.GetContext ();
 			Stream stream = ctx.Request.InputStream;
 			System.IO.StreamReader reader = new System.IO.StreamReader (stream, ASCIIEncoding.UTF8);
 			String body = reader.ReadToEnd ();
 
+			string respStr = "";
+
 			if (body.Equals ("exit")) {
 				shutDown = true;
+			} else if (body.Equals ("reset")) {
+				var state = resetFunc();
+				respStr = Converter.float2string(state);
+			} else {
+				var action = Converter.string2float(body);
+				var state = stepFunc(action);
+				respStr = Converter.float2string(state);
 			}
 
-			string[] res = body.Split (' ');
-			float[] action = new float[]{ 0, 0, 0, 0, 0, 0 };
-
-			for(int i = 0; i < res.Length; i++){
-				action[i] = Convert.ToSingle(res[i]);
-			}
-
-			Debug.Log (body);
-			setFunc (action);
+			Debug.Log ("Recieved: " + body);
 
 			HttpListenerResponse resp = ctx.Response;
-			string resString = "";
 
-			float[] angle = getFunc ();
-
-			foreach (float i in angle) {
-				resString += " " + i.ToString ();
-			}
-
-			byte[] buffer = ASCIIEncoding.UTF8.GetBytes (resString);
+			byte[] buffer = ASCIIEncoding.UTF8.GetBytes (respStr);
 			resp.ContentLength64 = buffer.Length;
+
 			Stream output = resp.OutputStream;
 			output.Write (buffer, 0, buffer.Length);
 			output.Close ();
