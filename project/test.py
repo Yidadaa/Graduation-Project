@@ -6,9 +6,10 @@ if __name__ == '__main__':
     start = time.clock()
     i = 0
     while i < 1000:
-        test.step([1,2,3])
+        state = test.step([1,2,3])
         i += 1
         if i % 100 == 0:
             print(i)
+            print(state)
     
     print(time.clock() - start)

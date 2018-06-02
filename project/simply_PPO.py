@@ -13,7 +13,7 @@ gym 0.9.2
 import tensorflow as tf
 import numpy as np
 import matplotlib.pyplot as plt
-import gym
+# import gym
 from arm_env import ArmEnv
 from unity_arm_env import UnityArmEnv
 import json, time
@@ -22,12 +22,12 @@ from tqdm import tqdm
 class Plot():
     def __init__(self):
         plt.figure(figsize=(5, 3))
-        plt.ion()
+        # plt.ion()
 
     def update(self, data):
         plt.cla()
         plt.plot(data)
-        plt.pause(0.05)
+        plt.savefig('./fig.jpg')
 
 class PPO(object):
 
@@ -47,6 +47,8 @@ class PPO(object):
         self.kl_target = 0.01
         self.clip_epsilon = 0.2
         self.should_norm_advantage = False # 是否归一化优势
+        self.num_layers = 3 # 全连接层数
+        self.hidden_units = 128 # 每个全连接层的单元数目
 
         # 覆盖默认配置
         for key, value in config.items():
@@ -62,8 +64,10 @@ class PPO(object):
 
         # critic
         with tf.variable_scope('critic'):
-            l1 = tf.layers.dense(self.tfs, 100, tf.nn.relu)
-            self.v = tf.layers.dense(l1, 1)
+            hidden = self.tfs
+            for i in range(self.num_layers):
+                hidden = tf.layers.dense(hidden, self.hidden_units, tf.nn.tanh)
+            self.v = tf.layers.dense(hidden, 1)
             self.tfdc_r = tf.placeholder(tf.float32, [None, 1], 'discounted_r')
             self.advantage = self.tfdc_r - self.v
             self.closs = tf.reduce_mean(tf.square(self.advantage))
@@ -85,7 +89,7 @@ class PPO(object):
         with tf.variable_scope('loss'):
             with tf.variable_scope('surrogate'):
                 # ratio = tf.exp(pi.log_prob(self.tfa) - oldpi.log_prob(self.tfa))
-                ratio = pi.prob(self.tfa) / oldpi.prob(self.tfa)
+                ratio = pi.prob(self.tfa) / (oldpi.prob(self.tfa) + 1e-6)
                 surr = ratio * self.tfadv
             if self.METHOD['name'] == 'kl_pen':
                 self.tflam = tf.placeholder(tf.float32, None, 'lambda')
@@ -100,6 +104,9 @@ class PPO(object):
         with tf.variable_scope('atrain'):
             self.atrain_op = tf.train.AdamOptimizer(
                 self.A_LR).minimize(self.aloss)
+
+        # tf.summary.scalar('aloss', self.aloss)
+        # tf.summary.scalar('closs', self.closs)
 
         # tf.summary.FileWriter("log/", self.sess.graph)
 
@@ -136,12 +143,14 @@ class PPO(object):
 
     def _build_anet(self, name, trainable):
         with tf.variable_scope(name):
-            l1 = tf.layers.dense(
-                self.tfs, 100, tf.nn.relu, trainable=trainable)
-            mu = 2 * tf.layers.dense(l1, self.A_DIM,
+            hidden = self.tfs
+            for i in range(self.num_layers):
+                hidden = tf.layers.dense(
+                    hidden, self.hidden_units, tf.nn.tanh, trainable=trainable)
+            mu = 2 * tf.layers.dense(hidden, self.A_DIM,
                                      tf.nn.tanh, trainable=trainable)
             sigma = tf.layers.dense(
-                l1, self.A_DIM, tf.nn.softplus, trainable=trainable)
+                hidden, self.A_DIM, tf.nn.softplus, trainable=trainable)
             norm_dist = tf.distributions.Normal(loc=mu, scale=sigma)
         params = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=name)
         return norm_dist, params
@@ -175,18 +184,18 @@ def train(config={}, use_unity_arm=False):
 
     plot = Plot()
 
-    for ep in tqdm(range(ppo.EP_MAX), desc='Training'):
+    for ep in range(ppo.EP_MAX):
         s = env.reset()
         buffer_s, buffer_a, buffer_r = [], [], []
         ep_r = 0
-        for t in range(ppo.EP_LEN):    # in one episode
+        for t in tqdm(range(ppo.EP_LEN), desc='Training EP-' + str(ep) + '/' + str(ppo.EP_MAX) + ': '):    # in one episode
             if should_render:
                 env.render()
             a = ppo.choose_action(s)
             s_, r, done = env.step(a)
             buffer_s.append(s)
             buffer_a.append(a)
-            buffer_r.append((r+8)/8)    # normalize reward, find to be useful
+            buffer_r.append(r)    # normalize reward, find to be useful
             s = s_
             ep_r += r
 
@@ -202,6 +211,8 @@ def train(config={}, use_unity_arm=False):
                 bs, ba, br = np.vstack(buffer_s), np.vstack(
                     buffer_a), np.array(discounted_r)[:, np.newaxis]
                 buffer_s, buffer_a, buffer_r = [], [], []
+                # bs = (bs - bs.mean()) / (bs.std() + 1e-6)
+                # br = (br - br.mean()) / (br.std() + 1e-6)
                 ppo.update(bs, ba, br)
         if ep == 0:
             all_ep_r.append(ep_r)
@@ -252,9 +263,9 @@ if __name__ == '__main__':
                 attr: value,
                 'should_render': False, # 关闭GUI显示
                 'optimization_type': 1,
-                'EP_LEN': 200,
-                'BATCH': 128,
-                'EP_MAX': 2000
+                'EP_LEN': 10240,
+                'BATCH': 1024,
+                'EP_MAX': 100
             }, use_unity_arm=True)
             # 保存实验数据
             with open('./data/{}__{}.json'.format(attr, value), 'w') as f:

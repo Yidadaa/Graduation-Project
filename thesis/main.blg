@@ -5,6 +5,18 @@ The style file: thesis-uestc.bst
 Database file #1: reference.bib
 Warning--entry type for "coachPPOdoc" isn't style-file defined
 --line 18 of file reference.bib
+Repeated entry---line 234 of file reference.bib
+ : @article{hausknecht2015deep
+ :                            ,
+I'm skipping whatever remains of this entry
+`volume' is a missing field, not a string, for entry mnih2013playing
+while executing---line 500 of file thesis-uestc.bst
+`pages' is a missing field, not a string, for entry mnih2013playing
+while executing---line 500 of file thesis-uestc.bst
+`volume' is a missing field, not a string, for entry bellemare2017distributional
+while executing---line 500 of file thesis-uestc.bst
+`pages' is a missing field, not a string, for entry bellemare2017distributional
+while executing---line 500 of file thesis-uestc.bst
 `volume' is a missing field, not a string, for entry Schulman2015Trust
 while executing---line 500 of file thesis-uestc.bst
 `journal' is a missing field, not a string, for entry Schulman2017Proximal
@@ -13,49 +25,95 @@ while executing---line 500 of file thesis-uestc.bst
 while executing---line 500 of file thesis-uestc.bst
 `pages' is a missing field, not a string, for entry Schulman2017Proximal
 while executing---line 500 of file thesis-uestc.bst
+`volume' is a missing field, not a string, for entry lillicrap2015continuous
+while executing---line 500 of file thesis-uestc.bst
+`pages' is a missing field, not a string, for entry lillicrap2015continuous
+while executing---line 500 of file thesis-uestc.bst
+`date' is a missing field, not a string, for entry tsitsiklis1996analysis
+while executing---line 500 of file thesis-uestc.bst
+`date' is a missing field, not a string, for entry lin1993reinforcement
+while executing---line 500 of file thesis-uestc.bst
+`volume' is a missing field, not a string, for entry schaul2015prioritized
+while executing---line 500 of file thesis-uestc.bst
+`pages' is a missing field, not a string, for entry schaul2015prioritized
+while executing---line 500 of file thesis-uestc.bst
+`volume' is a missing field, not a string, for entry lakshminarayanan2016dynamic
+while executing---line 500 of file thesis-uestc.bst
+`pages' is a missing field, not a string, for entry lakshminarayanan2016dynamic
+while executing---line 500 of file thesis-uestc.bst
+`volume' is a missing field, not a string, for entry van2016learning
+while executing---line 500 of file thesis-uestc.bst
+`pages' is a missing field, not a string, for entry van2016learning
+while executing---line 500 of file thesis-uestc.bst
+`volume' is a missing field, not a string, for entry franccois2015discount
+while executing---line 500 of file thesis-uestc.bst
+`pages' is a missing field, not a string, for entry franccois2015discount
+while executing---line 500 of file thesis-uestc.bst
+`volume' is a missing field, not a string, for entry wang2015dueling
+while executing---line 500 of file thesis-uestc.bst
+`pages' is a missing field, not a string, for entry wang2015dueling
+while executing---line 500 of file thesis-uestc.bst
+`volume' is a missing field, not a string, for entry hausknecht2015deep
+while executing---line 500 of file thesis-uestc.bst
+`pages' is a missing field, not a string, for entry hausknecht2015deep
+while executing---line 500 of file thesis-uestc.bst
+`volume' is a missing field, not a string, for entry schulman2015high
+while executing---line 500 of file thesis-uestc.bst
+`pages' is a missing field, not a string, for entry schulman2015high
+while executing---line 500 of file thesis-uestc.bst
+`pages' is a missing field, not a string, for entry silver2014deterministic
+while executing---line 500 of file thesis-uestc.bst
+`volume' is a missing field, not a string, for entry balduzzi2015compatible
+while executing---line 500 of file thesis-uestc.bst
+`pages' is a missing field, not a string, for entry balduzzi2015compatible
+while executing---line 500 of file thesis-uestc.bst
+`volume' is a missing field, not a string, for entry heess2015memory
+while executing---line 500 of file thesis-uestc.bst
+`pages' is a missing field, not a string, for entry heess2015memory
+while executing---line 500 of file thesis-uestc.bst
 `journal' is a missing field, not a string, for entry Ioffe2015Batch
 while executing---line 500 of file thesis-uestc.bst
 `volume' is a missing field, not a string, for entry Ioffe2015Batch
 while executing---line 500 of file thesis-uestc.bst
-You've used 4 entries,
+You've used 31 entries,
             717 wiz_defined-function locations,
-            261 strings with 2143 characters,
-and the built_in function-call counts, 602 in all, are:
-= -- 35
-> -- 37
+            399 strings with 7281 characters,
+and the built_in function-call counts, 5159 in all, are:
+= -- 271
+> -- 354
 < -- 0
-+ -- 20
-- -- 10
-* -- 45
-:= -- 86
++ -- 198
+- -- 96
+* -- 372
+:= -- 757
 add.period$ -- 0
-call.type$ -- 4
-change.case$ -- 3
+call.type$ -- 31
+change.case$ -- 30
 chr.to.int$ -- 0
-cite$ -- 3
-duplicate$ -- 38
-empty$ -- 32
-format.name$ -- 13
-if$ -- 104
+cite$ -- 30
+duplicate$ -- 358
+empty$ -- 248
+format.name$ -- 124
+if$ -- 884
 int.to.chr$ -- 0
 int.to.str$ -- 0
-missing$ -- 13
-newline$ -- 7
-num.names$ -- 3
-pop$ -- 17
+missing$ -- 137
+newline$ -- 34
+num.names$ -- 30
+pop$ -- 169
 preamble$ -- 0
 purify$ -- 0
 quote$ -- 0
-skip$ -- 12
+skip$ -- 113
 stack$ -- 0
-substring$ -- 54
-swap$ -- 20
+substring$ -- 330
+swap$ -- 192
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
 warning$ -- 0
-while$ -- 9
+while$ -- 84
 width$ -- 0
-write$ -- 37
-(There were 6 error messages)
+write$ -- 317
+(There were 34 error messages)

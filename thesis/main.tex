@@ -30,13 +30,13 @@
 \begin{document}
 	
 	\begin{chineseabstract}
-		近年来，强化学习技术在人工智能、机器学习和自动控制等领域中得到了广泛的研究和应用，并被认为是设计智能系统的核心技术之一。本文尝试将虚拟现实技术中的Unity引擎与强化学习算法的训练结合起来，并通过多线程训练等优化手段，使得强化学习的训练时间大幅度减少。同时通过Unity强大的物理引擎尽可能地拟合真实环境，从而使得训练出的强化学习模型无需经过细致调参优化就可以很好地迁移应用到实体机械环境上。
+		近年来，强化学习技术在人工智能、机器学习和自动控制等领域中得到了广泛的研究和应用，并被认为是设计智能系统的核心技术之一。本文尝试将虚拟现实技术中的Unity引擎与强化学习算法的训练结合起来，通过建立中间层的方式打通两者的运行时环境，并通过多种优化手段，使得强化学习的训练时间大幅度减少。本文通过实验证明了Unity引擎在强化学习领域有很广阔的应用空间。
 		
 		\chinesekeyword{强化学习，虚拟现实，机器控制算法}
 	\end{chineseabstract}
 	
 	\begin{englishabstract}
-		In recent years, reinforcement learning technology has been widely studied and applied in the fields of artificial intelligence, machine learning and automatic control, and is considered as one of the core technologies for designing intelligent systems. This article attempts to combine the Unity engine in virtual reality technology with the training of reinforcement learning algorithms, so that the training time for reinforcement learning is greatly reduced. At the same time, Unity's powerful physics engine fits the real environment as much as possible, so that the trained reinforcement learning model can be well migrated and applied to the physical environment without careful tuning and optimization.
+		In recent years, reinforcement learning technology has been widely studied and applied in the fields of artificial intelligence, machine learning and automatic control, and is considered as one of the core technologies for designing intelligent systems. This article attempts to combine the Unity engine in virtual reality technology with the training of reinforcement learning algorithms. Through the establishment of the middle tier, it can open up the runtime environments of both, and through multiple optimization methods, the training time for reinforcement learning is greatly reduced. This article demonstrates through experiments that the Unity engine has a very broad application space in the field of reinforcement learning.
 		
 		\englishkeyword{Reinforcement Learning, Virtual Reality, Robotic Control}
 	\end{englishabstract}
@@ -54,7 +54,7 @@
 	与此同时，虚拟现实技术已被认为是人机接口技术的一场革命。它利用计算机和电子技术来产生逼真的视、听、触、力等三维感觉环境, 形成一种虚拟世界。 它与人工智能、计算机图形学、人机接口技术、多媒体技术、传感技术以及高度并行的实时计算技术等领域联系十分紧密。虚拟现实技术可以最大限度地模拟真实环境，根据这个特点，人们可以在虚拟现实中开展各种训练任务，训练完成后将模型迁移到真实环境中。
 	
 	\section{强化学习算法的国内外研究历史与现状}
-	强化学习作为机器学习领域另一个研究热点，已经广泛应用于工业制造。因此RL 方法更加侧重于学习解决问题的策略。随着人类社会的飞速发展，在越来越多复杂的现实场景任务中，需要利用深度学习(Deep Learning, DL)来自动学习大规模输入数据的抽象表征，并以此表征为依据进行自我激励的RL，优化解决问题的策略。RL的基本思想是通过最大化智能体(agent)从环境中获得的累计奖赏值，以学习到完成目标的最优策略。由此，谷歌的人工智能研究团队DeepMind 创新性地将具有感知能力的DL和具有决策能力的RL相结合，形成了人工智能领域新的研究热点，即深度强化学习(Deep Reinforcement Learning，DRL)。此后，在很多挑战性领域中，DeepMind 团队构造并实现了人类专家级别的agent。这些agent 对自身知识的构建和学习都直接来自原始输入信号，无需任何的人工编码和领域知识。因此DRL 是一种端对端(end-to-end)的感知与控制系统，具有很强的通用性。目前DRL技术在游戏等领域中得到了广泛的应用，并被认为是迈向通用人工智能(Artificial General Intelligence，AGI)的重要途径。
+	强化学习作为机器学习领域另一个研究热点，已经广泛应用于工业制造。因此RL 方法更加侧重于学习解决问题的策略。随着人类社会的飞速发展，在越来越多复杂的现实场景任务中，需要利用深度学习(Deep Learning, DL)来自动学习大规模输入数据的抽象表征，并以此表征为依据进行自我激励的RL，优化解决问题的策略。RL的基本思想是通过最大化智能体(agent)从环境中获得的累计奖赏值，以学习到完成目标的最优策略\cite{kober2013reinforcement}。由此，谷歌的人工智能研究团队DeepMind 创新性地将具有感知能力的DL和具有决策能力的RL相结合\cite{mnih2013playing}，形成了人工智能领域新的研究热点，即深度强化学习(Deep Reinforcement Learning，DRL)。此后，在很多挑战性领域中，DeepMind 团队构造并实现了人类专家级别的agent。这些agent 对自身知识的构建和学习都直接来自原始输入信号，无需任何的人工编码和领域知识。因此DRL 是一种端对端(end-to-end)的感知与控制系统，具有很强的通用性。目前DRL技术在游戏等领域中得到了广泛的应用，并被认为是迈向通用人工智能(Artificial General Intelligence，AGI)的重要途径。
 	
 	\begin{figure}
 		\includegraphics[width=15cm]{./pic/fg6.jpg}
@@ -64,22 +64,22 @@
 	
 	如图\ref{fg6}所示，目前主流的强化学习算法主要分为如下几类：
 	\begin{enumerate}
-		\item 基于值函数优化(Value Optimization)的算法，代表算法为Q-Learning，Mnih 等人将卷积神经网络与传统RL中的Q-Learning算法相结合，提出了深度Q网络(Deep Q-Network, DQN)模型，此后又涌现出双深度Q网络(Double Deep Q-Network, DDQN)、分类Q网络(Categorical Deep Q-Network，CDQN)、增强Q网络(Bootstrapped Deep Q-Network)等一系列值优化模型；
+		\item 基于值函数优化(Value Optimization)的算法，代表算法为Q-Learning，Mnih 等人\cite{mnih2015human}将卷积神经网络与传统RL中的Q-Learning算法相结合，提出了深度Q网络(Deep Q-Network, DQN)模型，此后又涌现出双深度Q网络\cite{van2016deep}(Double Deep Q-Network, DDQN)、分类Q网络\cite{bellemare2017distributional}(Categorical Deep Q-Network，CDQN)、增强Q网络\cite{osband2016deep}(Bootstrapped Deep Q-Network)等一系列值优化模型；
 		
-		\item 基于策略梯度优化(Policy Optimization)的算法，此类算法可以能够直接在策略空间中搜索最优策略，从而比基于值函数优化的方法实用性更广，代表算法有区域信赖的策略最优化方法(Trust Region Policy Optimization，TRPO)、近端梯度优化方法(Proximal Policy Optimization， PPO)。
+		\item 基于策略梯度优化(Policy Optimization)的算法，此类算法可以能够直接在策略空间中搜索最优策略，从而比基于值函数优化的方法实用性更广，代表算法有区域信赖的策略最优化方法\cite{Schulman2015Trust}(Trust Region Policy Optimization，TRPO)、近端梯度优化方法\cite{Schulman2017Proximal}(Proximal Policy Optimization， PPO)。
 		
-		\item 行动者-评论者优化方法(Actor-Critic)，Lillicrap 等人利用DQN扩展Q-Learning的思路对确定性梯度策略(Deterministic Policy Gradient，DPG)方法进行改造，提出了一种基于AC 框架的深度确定性策略梯度(Deep Deterministic Policy Gradient，DDPG)算法，并在解决连续动作空间问题上取得了很好的效果。
+		\item 行动者-评论者优化方法(Actor-Critic)，Lillicrap 等人\cite{lillicrap2015continuous}利用DQN扩展Q-Learning的思路对确定性梯度策略(Deterministic Policy Gradient，DPG)方法进行改造，提出了一种基于AC 框架的深度确定性策略梯度(Deep Deterministic Policy Gradient，DDPG)算法，并在解决连续动作空间问题上取得了很好的效果。
 	\end{enumerate}
 	
 	\section{本文的主要贡献与创新}
-	本文尝试将虚拟现实技术中的Unity 3D环境与强化学习算法的训练结合起来，使得强化学习的训练时间大幅度减少。同时通过Unity强大的物理引擎尽可能地拟合真实环境，从而使得训练出的强化学习模型无需经过细致调参优化就可以很好地迁移应用到实体机械环境上。
+	本文尝试将虚拟现实技术中的Unity引擎与强化学习算法的训练结合起来，通过建立中间层的方式打通两者的运行时环境，并通过多种优化手段，使得强化学习的训练时间大幅度减少，通过实验证明了Unity引擎在强化学习领域有很广阔的应用空间。
 	
 	\section{本论文的结构安排}
-	本文的主要章节安排如下：第二章主要介绍了强化学习领域的基础知识，并对主流的强化学习算法的发展路线进行梳理；第三章首先介绍了Unity相对于传统强化学习仿真框架的优势，然后对本文采用的强化学习算法进行介绍，之后分别在2D环境和3D环境中实践该算法，并对Unity与强化学习整合的可能性进行评估；第四章对全文进行总结和回顾。
+	本文的主要章节安排如下：第二章主要介绍了强化学习领域的基础知识，并对主流的强化学习算法的发展路线进行梳理；第三章首先介绍了Unity相对于传统强化学习仿真框架的优势，然后对本文采用的强化学习算法进行介绍，之后分别在2D环境和3D环境中实践该算法，并对Unity与强化学习整合的架构进行了说明和实践验证；第四章对全文进行总结和回顾。
 	
 	\chapter{强化学习理论}
 	\section{强化学习基础}
-	RL是一种从环境状态映射到动作的学习，目标是使agent在与环境的交互过程中获得最大的累积奖赏。马尔可夫决策过程(Markov Decision Process，MDP)可以用来对RL问题进行建模。通常将MDP 定义为一个四元组$(S,A,\rho,f)$，其中：
+	RL是一种从环境状态映射到动作的学习，目标是使agent在与环境的交互过程中获得最大的累积奖赏\cite{sutton1998reinforcement}。马尔可夫决策过程(Markov Decision Process，MDP)可以用来对RL问题进行建模。通常将MDP 定义为一个四元组$(S,A,\rho,f)$，其中：
 	
 	\begin{enumerate}
 		\item $S$为所有环境状态的集合。$s_t\in S$表示agent在$t$时刻所处的状态；
@@ -116,11 +116,11 @@
 	Q_{i+1}(s,a)=E_{s'\sim S}[r+\gamma max_{a'}Q_i(s',a')|s,a]
 	\end{equation}
 	
-	其中，当$i\rightarrow\infty$时，$Q_i\rightarrow Q^*$。即通过不断地迭代会使状态动作值函数最终收敛，从而得到最优策略$\pi^*=argmax_{a\in A}Q^*(s,a)$。然而对于实际问题来说，通过迭代式\ref{eq5}求解最优策略显然是不可行的，因为在大状态空间下，用迭代贝尔曼方程求解$Q$值函数的方法计算代价太大．针对此问题，在RL算法中，通常使用线性函数逼近器来近似表示状态动作值函数，即$Q(s,a,\theta)\approx Q^*(s,a)$。此外，也可以用深度神经网络等非线性函数逼近器去近似表示值函数或策略。然而将RL与深度神经网络相结合可能会出现算法不稳定等问题，这一直阻碍着DRL的发展与应用。
+	其中，当$i\rightarrow\infty$时，$Q_i\rightarrow Q^*$。即通过不断地迭代会使状态动作值函数最终收敛，从而得到最优策略$\pi^*=argmax_{a\in A}Q^*(s,a)$。然而对于实际问题来说，通过迭代式\ref{eq5}求解最优策略显然是不可行的，因为在大状态空间下，用迭代贝尔曼方程求解$Q$值函数的方法计算代价太大．针对此问题，在RL算法中，通常使用线性函数逼近器来近似表示状态动作值函数，即$Q(s,a,\theta)\approx Q^*(s,a)$。此外，也可以用深度神经网络等非线性函数逼近器去近似表示值函数或策略。然而将RL与深度神经网络相结合可能会出现算法不稳定\cite{tsitsiklis1996analysis}等问题，这一直阻碍着DRL的发展与应用。
 	
 	\section{基于值函数的深度强化学习}
 	\subsection{深度Q网络}
-	Mnih等人将卷积神经网络与传统RL中的Q学习算法相结合，提出了深度Q网络（Deep Q-Network, DQN）模型．该模型用于处理基于视觉感知的控制任务，是DRL领域的开创性工作．
+	深度Q网络模型将卷积神经网络与传统RL中的Q学习算法相结合，用于处理基于视觉感知的控制任务，是DRL领域的开创性工作。
 	
 	\subsubsection{模型结构}
 	DQN模型的输入是距离当前时刻最近的4幅预处理后的图像。该输入经过3个卷积层和2个全连接层的非线性变换，最终在输出层产生每个动作的Q值。图\ref{fg1}表示DQN的模型结构。
@@ -160,7 +160,7 @@
 	\subsubsection{深度双Q网络}\label{sec1}
 	在DQN中使用$Y_i=r+\gamma max_{a'}Q(s',a'|\theta_i^-)$近似表示值函数的优化目标时，每次都选取下一个状态中最大Q值所对应的动作。选择和评价动作都是基于目标值网络的参数$\theta^-$，这会引起在学习过程中出现过高估计Q值的问题。
 	
-	Hasselt等人基于双Q学习算法(double Q-learning)，提出了深度双Q网络(Deep DoubleQ-Network, DDQN)算法。在双Q学习中有两套不同的参数：$\theta$和$\theta^-$。其中$\theta$用来选择对应最大Q值的动作，$\theta$用来评估最优动作的Q值。两套参数将动作选择和策略评估分离开，降低了过高估计Q值的风险。因此DDQN使用当前值网络的参数$\theta$来选择最优动作，使用目标值网络的参数$\theta^-$来评估该最优动作。目标Q值的形式如下：
+	Hasselt等人\cite{van2016deep}基于双Q学习算法(double Q-learning)，提出了深度双Q网络(Deep DoubleQ-Network, DDQN)算法。在双Q学习中有两套不同的参数：$\theta$和$\theta^-$。其中$\theta$用来选择对应最大Q值的动作，$\theta$用来评估最优动作的Q值。两套参数将动作选择和策略评估分离开，降低了过高估计Q值的风险。因此DDQN使用当前值网络的参数$\theta$来选择最优动作，使用目标值网络的参数$\theta^-$来评估该最优动作。目标Q值的形式如下：
 	\begin{equation}
 		\label{eq8}
 		Y_i^{DDQN}=r+\gamma Q(x',argmax_a Q(s',a'|\theta_i^-))
@@ -168,7 +168,7 @@
 	DDQN在其他方面都与DQN保持一致。实验表明，DDQN能够估计出更加准确的Q值，在一些Atari 2600游戏中可获得更稳定有效的策略。
 	
 	\subsubsection{基于优势学习的深度Q网络}
-	根据\ref{sec1}节可知，降低Q值的评估误差可以提升性能。Bellemare等人在贝尔曼方程中定义新的操作符，来增大最优动作值和次优动作值之间的差异，以缓和每次都选取下一状态中最大Q值对应动作所带来的评估误差。具体的改进如下：
+	根据\ref{sec1}节可知，降低Q值的评估误差可以提升性能。Bellemare等人\cite{bellemare2016increasing}在贝尔曼方程中定义新的操作符，来增大最优动作值和次优动作值之间的差异，以缓和每次都选取下一状态中最大Q值对应动作所带来的评估误差。具体的改进如下：
 	基于采样得到的样本计算均方误差$\Delta Q(s,a)^2$，其中误差项定义为：
 	\begin{equation}
 		\label{eq9}
@@ -192,16 +192,16 @@
 	实验表明，用AL和PAL误差项来替代贝尔曼方程中的误差项，可以有效地增加最优和次优动作对应值函数之间的差异，从而获得更加精确的Q值。即在DQN中加入AL和PAL误差项，可以有效地减小评估Q值时的偏差，促进学习效果的进一步提升，在许多Atari 2600游戏中取得了更好的表现。其中，采用PAL误差项时，最优和次优动作对应值函数之间的差异更大，Q值的评估也更加精确。
 	
 	\subsubsection{基于优先级采样的深度Q网络}
-	DQN为了消除转移样本$e_t=(s_t,a_t,r_t,s_{t+1})$之间的相关性，使用经验回放机制在线地存储和使用agent与环境交互得到的历史样本。在每个时刻，经验回放机制从样本池中等概率地抽取小批量的样本用于训练。然而等概率采样并不能区分不同样本的重要性，同时由于样本池D的存储量有限，某些样本还未被充分利用就已经被舍弃。针对该问题，Schaul等人在DDQN的基础上提出了一种基于比例优先级采样的深度双Q网络(double deep Q-Network with proportional prioritization)。该方法用基于优先级的采样方式来替代均匀采样，提高一些有价值样本的采样概率，从而加快最优策略的学习。具体的改进如下：
+	DQN为了消除转移样本$e_t=(s_t,a_t,r_t,s_{t+1})$之间的相关性，使用经验回放机制\cite{lin1993reinforcement}在线地存储和使用agent与环境交互得到的历史样本。在每个时刻，经验回放机制从样本池中等概率地抽取小批量的样本用于训练。然而等概率采样并不能区分不同样本的重要性，同时由于样本池D的存储量有限，某些样本还未被充分利用就已经被舍弃。针对该问题，Schaul\cite{schaul2015prioritized}等人在DDQN的基础上提出了一种基于比例优先级采样的深度双Q网络(double deep Q-Network with proportional prioritization)。该方法用基于优先级的采样方式来替代均匀采样，提高一些有价值样本的采样概率，从而加快最优策略的学习。具体的改进如下：
 
 	该抽样方法将每个样本的时间差分(Temporal Difference,TD)误差项作为评价优先级的标准。该误差为：$r+\gamma max_{a'}Q(s',a'|\theta^-)-Q(s,a|\theta)$，并且其绝对值越大，对应样本被采样的概率越高。在抽样过程中该方法使用随机比例化(stochastic prioritization)和重要性采样权重(importance-sampling weights)两种技巧。其中，随机比例化操作不仅能充分利用较大TD误差项对应的样本，而且保证了抽取样本的多样性。重要性采样权重的使用放缓了参数更新的速度，保证了学习的稳定性。实验表明，基于该抽样方式的深度双Q网络可以提升训练速度，并在很多Atari 2600游戏中获得了更高的分数。
 	
-	另外，Lakshminarayanan等人使用动态跳帧的方式来替代DQN中每个时刻重复k次的动作，提出了动态跳帧的DQN(Dynamic Frame Skip DeepQ-Network，DFDQN)算法。实验表明，DFDQN在一些Atari 2600游戏中取得了更好的性能；Hasselt等人使用一种称为Pop-Art的动态归一化操作来替代传统DQN中的区间裁剪方法。在不流失重要状态信息的前提下，统一了不同任务中目标Q值的量级，提高了agent在很多Atari2600游戏中的表现；Vincent等人在DQN中使用自适应的折扣因子和学习率，加速了深度网络收敛的速度。
+	另外，Lakshminarayanan等人\cite{lakshminarayanan2016dynamic}使用动态跳帧的方式来替代DQN中每个时刻重复k次的动作，提出了动态跳帧的DQN(Dynamic Frame Skip DeepQ-Network，DFDQN)算法。实验表明，DFDQN在一些Atari 2600游戏中取得了更好的性能；Hasselt\cite{van2016learning}等人使用一种称为Pop-Art的动态归一化操作来替代传统DQN中的区间裁剪方法。在不流失重要状态信息的前提下，统一了不同任务中目标Q值的量级，提高了agent在很多Atari2600游戏中的表现；Vincent等人\cite{franccois2015discount}在DQN中使用自适应的折扣因子和学习率，加速了深度网络收敛的速度。
 	
 	\subsection{DQN模型结构的改进}
 	对DQN模型的改进一般是通过向原有网络中添加新的功能模块来实现的。例如，可以向DQN模型中加入循环神经网络结构，使得模型拥有时间轴上的记忆能力。本节主要介绍两种重要的DQN模型的改进版本，分别是基于竞争架构的DQN和深度循环Q网络(Deep Recurrent Q-Network，DRQN)。
 	\subsubsection{基于竞争架构的DQN}
-	在很多基于视觉感知的DRL任务中，受不同动作的影响，状态动作对的值函数是不同的。然而在某些状态下，值函数的大小是与动作无关的。利用上述思想，Wang等人设计了一种竞争网络结构(dueling network)，并将其加入到DQN网络模型中。如图\ref{fg3}，该网络结构与DQN模型的不同之处在于：DQN将CNN提取的抽象特征经过全连接层后，直接在输出层输出对应动作的Q值，而引入竞争网络结构的模型则将CNN提取的抽象特征分流到两个支路中，其中一路代表状态值函数，另一路代表依赖状态的动作优势函数(advantage function)。通过该种竞争网络结构，agent可以在策略评估过程中更快地识别出正确的行为。
+	在很多基于视觉感知的DRL任务中，受不同动作的影响，状态动作对的值函数是不同的。然而在某些状态下，值函数的大小是与动作无关的。利用上述思想，Wang等人\cite{wang2015dueling}设计了一种竞争网络结构(dueling network)，并将其加入到DQN网络模型中。如图\ref{fg3}，该网络结构与DQN模型的不同之处在于：DQN将CNN提取的抽象特征经过全连接层后，直接在输出层输出对应动作的Q值，而引入竞争网络结构的模型则将CNN提取的抽象特征分流到两个支路中，其中一路代表状态值函数，另一路代表依赖状态的动作优势函数(advantage function)。通过该种竞争网络结构，agent可以在策略评估过程中更快地识别出正确的行为。
 	\begin{figure}
 		\includegraphics[width=8cm]{./pic/fg3.jpg}
 		\caption{基于竞争架构的DQN模型结构}
@@ -215,7 +215,7 @@
 	其中，$\alpha$、$\beta$和$\theta$分别代表状态值流、动作优势流和模型剩余部件的参数。然而在实际操作中，一般要将动作优势流设置为单独动作优势函数值减去某状态下所有动作优势函数的平均值。该技巧不仅可以保证该状态下各动作的优势函数相对排序不变，而且可以缩小Q值的范围，去除多余的自由度。实验表明，在DQN中加入竞争网络可以使得值函数的估计更加精确。在频繁出现agent采取不同动作但对应值函数相等的情形下，竞争架构的DQN模型性能提升最为明显。
 	
 	\subsubsection{深度循环Q网络}
-	在传统的RL方法中，状态信息的部分可观察性一直是个亟待解决的难题。DQN通过堆叠离当前时刻最近的4幅历史图像组成输入状态，有效缓解了状态信息的部分可观察问题，却增加了网络的计算和存储负担。针对此问题，Hausknecht等人利用循环神经网络结构来记忆时间轴上连续的历史状态信息，提出了DRQN模型。
+	在传统的RL方法中，状态信息的部分可观察性一直是个亟待解决的难题。DQN通过堆叠离当前时刻最近的4幅历史图像组成输入状态，有效缓解了状态信息的部分可观察问题，却增加了网络的计算和存储负担。针对此问题，Hausknecht等人\cite{hausknecht2015deep}利用循环神经网络结构来记忆时间轴上连续的历史状态信息，提出了DRQN模型。
 	\begin{figure}
 		\includegraphics[width=8cm]{./pic/fg4.jpg}
 		\caption{DRQN模型结构}
@@ -245,7 +245,7 @@
 		\theta\leftarrow\theta+\alpha g
 	\end{equation}
 	其中，$\alpha$是学习率，控制着策略参数更新的速率。式\ref{eq15}中的$\nabla_\theta\sum_{t=0}^{T-1}log\pi(a_t|s_t;\theta)$梯度项表示能够提高轨迹$\tau$出现概率的方向，乘以得分函数R之后，可以使得单个情节内总奖赏越高的$\tau$概率密度越大。即如果收集了很多总奖赏不同的轨迹，通过上述训练过程会使得概率密度向总奖赏更高的轨迹方向移动，最大化高奖赏轨迹$\tau$出现的概率。
-	然而在某些情形下，每个情节的总奖赏R都不为负，那么所有梯度g的值也都是大于等于0的。此时在训练过程中遇到每个轨迹$\tau$，都会使概率密度向正的方向“拉拢”，很大程度减缓了学习速度。这会使得梯度g的方差很大。因此可以对R使用某种标准化操作来降低梯度g的方差。该技巧使得算法能提高总奖赏R较大的轨迹$\tau$的出现概率，同时降低总奖赏R较小的轨迹$\tau$出现概率。根据上述思想，Williams等人提出了REINFORCE算法，将策略梯度的形式统一为：
+	然而在某些情形下，每个情节的总奖赏R都不为负，那么所有梯度g的值也都是大于等于0的。此时在训练过程中遇到每个轨迹$\tau$，都会使概率密度向正的方向“拉拢”，很大程度减缓了学习速度。这会使得梯度g的方差很大。因此可以对R使用某种标准化操作来降低梯度g的方差。该技巧使得算法能提高总奖赏R较大的轨迹$\tau$的出现概率，同时降低总奖赏R较小的轨迹$\tau$出现概率。根据上述思想，Williams等人\cite{williams1992simple}提出了REINFORCE算法，将策略梯度的形式统一为：
 	\begin{equation}
 		\label{eq17}
 		g=\nabla_\theta\sum_{t=0}^{T-1}log\pi(a_t|s_t;\theta)(R-b)
@@ -264,7 +264,7 @@
 	\end{equation}
 	其中，$\gamma\in[0,1]$表示折扣因子。此时带折扣的奖赏之和$r_t+\gamma r_{t+1}+\gamma^2 r_{t+2}+\dots$相当于式\ref{eq17}中的R，带折扣的状态值函数$V(s_t)$相当于式\ref{eq17}中的基准$b$。当$\hat{A_t^\gamma}>0$时，会增加对应动作被选择的概率，而当$\hat{A_t^\gamma}<0$，会减少对应动作被选择的概率。
 	
-	另外，Hafner等人使用值函数来估计带折扣的奖赏和，进一步地缩小了梯度项地方差。此时进一步截断的$\hat{A_t^\gamma}$表示为：
+	另外，Hafner等人\cite{hafner2011reinforcement}使用值函数来估计带折扣的奖赏和，进一步地缩小了梯度项地方差。此时进一步截断的$\hat{A_t^\gamma}$表示为：
 	\begin{equation}
 		\label{eq20}
 		\hat{A_t^\gamma}=r_t+\gamma V(s_{t+1})-V(s_t)
@@ -281,7 +281,7 @@
 	\end{equation}
 	其中$\delta_t=r_t+\gamma r_{t+1}+\gamma^2V(s_{t+2})-V(s_t)$。$\lambda$是一个调节因子，范围大小为$0<\lambda<1$。当$\lambda$接近0时，$\hat{A_t^\gamma}$是低方差、高误差的；当$\lambda$接近于1时，$\hat{A_t^\gamma}$是高方差、低误差的。
 	
-	基于广义优势函数的策略梯度方法的不足之处在于：在利用式\ref{eq16}全局优化策略的过程中，很难确定一个合理的步长参数$\alpha$来保证学习的稳定性。针对此问题，Schulman\cite{Schulman2015Trust}等人提出了一种被称为区域信赖的策略最优化(Trust Region Policy Optimization，)方法。TRPO的核心思想是：强制限制同一批次数据上新旧两种策略预测分布的KL差异，从而避免导致策略发生太大改变的参数更新步。为了将应用范围扩展到大规模状态空间的DRL任务中，TRPO算法使用深度神经网络来参数化策略，在只接收原始输入图像的情况下实现了端对端的控制。实验表明，TRPO在一系列2D场景下的机器人控制和Atari 2600游戏任务中都表现优异。此后，Schulman等人又尝试将广义优势函数与TRPO方法相结合，在一系列3D场景下的机器人控制任务中取得了突破。
+	基于广义优势函数的策略梯度方法的不足之处在于：在利用式\ref{eq16}全局优化策略的过程中，很难确定一个合理的步长参数$\alpha$来保证学习的稳定性。针对此问题，Schulman\cite{Schulman2015Trust}等人提出了一种被称为区域信赖的策略最优化(Trust Region Policy Optimization，)方法。TRPO的核心思想是：强制限制同一批次数据上新旧两种策略预测分布的KL差异，从而避免导致策略发生太大改变的参数更新步。为了将应用范围扩展到大规模状态空间的DRL任务中，TRPO算法使用深度神经网络来参数化策略，在只接收原始输入图像的情况下实现了端对端的控制。实验表明，TRPO在一系列2D场景下的机器人控制和Atari 2600游戏任务中都表现优异。此后，Schulman等人\cite{schulman2015high}又尝试将广义优势函数与TRPO方法相结合，在一系列3D场景下的机器人控制任务中取得了突破。
 	
 	此外，深度策略梯度方法的另一个研究方向是通过增加额外的人工监督来促进策略搜索。例如著名的AlphaGo围棋机器人，先使用监督学习从人类专家的棋局中预测人类的走子行为，再用策略梯度方法针对赢得围棋比赛的真实目标进行精细的策略参数调整。然而在某些任务中是缺乏监督数据的，比如现实场景下的机器人控制，可以通过引导式策略搜索(guided policy search)方法来监督策略搜索的过程。在只接受原始输入信号的真实场景中，引导式策略搜索实现了对机器人的操控。
 	
@@ -293,12 +293,12 @@
 		\label{fg5}
 	\end{figure}
 
-	下面阐述一种重要的基于AC框架的深度策略梯度算法。Lillicrap等人利用DQN扩展Q学习算法的思路对确定性策略梯度(Deterministic Policy Gradient，DPG)方法进行改造，提出了一种基于AC框架的深度确定性策略梯度(Deep Deterministic Policy Gradient，DDPG)算法，该算法可用于解决连续动作空间上的DRL问题。DDPG分别使用参数为$\theta^\mu$和$\theta^Q$的深度神经网络来表示确定性策略$a=\pi(s|\theta^\mu)$和值函数$Q(s,a|\theta^Q)$。其中，策略网络用来更新策略，对应AC框架中的行动者；值网络用来逼近状态动作对的值函数，并提供梯度信息，对应AC框架中的评论家。在DDPG中，目标函数被定义为带折扣的奖赏和：
+	下面阐述一种重要的基于AC框架的深度策略梯度算法。Lillicrap等人\cite{lillicrap2015continuous}利用DQN扩展Q学习算法的思路对确定性策略梯度(Deterministic Policy Gradient，DPG)方法进行改造，提出了一种基于AC框架的深度确定性策略梯度(Deep Deterministic Policy Gradient，DDPG)算法，该算法可用于解决连续动作空间上的DRL问题。DDPG分别使用参数为$\theta^\mu$和$\theta^Q$的深度神经网络来表示确定性策略$a=\pi(s|\theta^\mu)$和值函数$Q(s,a|\theta^Q)$。其中，策略网络用来更新策略，对应AC框架中的行动者；值网络用来逼近状态动作对的值函数，并提供梯度信息，对应AC框架中的评论家。在DDPG中，目标函数被定义为带折扣的奖赏和：
 	\begin{equation}
 		\label{eq23}
 		J(\theta^\mu)=E_{\theta^\mu}[r_1+\gamma r_2+\gamma^2r_3+\dots]
 	\end{equation}
-	然后，采用随机梯度下降方法来对目标函数进行端对端的优化。Silver等人证明了目标函数关于$\theta^\mu$的梯度等价于Q值函数关于$\theta^\mu$的期望梯度：
+	然后，采用随机梯度下降方法来对目标函数进行端对端的优化。Silver等人\cite{silver2014deterministic}证明了目标函数关于$\theta^\mu$的梯度等价于Q值函数关于$\theta^\mu$的期望梯度：
 	\begin{equation}
 		\label{eq24}
 		\frac{\partial J(\theta^\mu)}{\partial \theta^\mu}=E_s[\frac{\partial Q(s,a|\theta^Q)}{\partial \theta^\mu}]
@@ -317,7 +317,7 @@
 	
 	实验表明，DDPG不仅在一系列连续动作空间的任务中表现稳定，而且求得最优解所需要的时间步也远远少于DQN。与基于值函数的DRL方法相比，基于AC框架的深度策略梯度方法优化策略效率更高、求解速度更快。
 	
-	然而在有噪声干扰的复杂环境下，策略一般都具有一定的随机性。DDPG使用确定性的策略梯度方法。对于随机环境的场景，该方法并不适用。针对此问题，Heess等人提出了一种适用于连续动作空间任务的通用框架，称为随机值梯度(Stochastic Value Gradient，SVG)方法。SVG使用“再参数化”(re-parameterization)的数学技巧来学习环境动态性的生成模型，将确定性策略梯度方法扩展为一种随机环境下的策略优化过程。Balduzzi等人基于相容的值函数逼近器(compatible function approximation)理论，提出了值梯度反向更新(Value-Gradient Backpropagation，GProp)方法。Peng等人融合多个策略网络和对应的值网络，提出了一种基于混合型行动者评论家指导(Mixture of Actor Critic Experts，MACE)的深度策略梯度方法。该方法在自适应机器人控制任务中取得了实质性的进展。MACE相比于单个AC框架指导的深度策略梯度方法，有着更快的学习速度。随后，Heess等人使用循环神经网络，进一步扩展了DPG和SVG算法的适用范围，提出了循环确定性策略梯度(Recurrent Deterministic Policy Gradient，RDPG)和循环随机值梯度(Recurrent Stochastic Value Gradient，RSVG)方法。RDPG和RSVG可以处理一系列部分可观察场景下连续动作的控制任务。Hausknecht等人进一步将深度策略梯度方法扩展到了参数化的连续动作空间问题中。此后，Schulman等人提出了一种形式化的随机计算图模型(stochastic computation graphs)，开展了同时包含随机性和确定性操作的复杂深度策略梯度的研究。
+	然而在有噪声干扰的复杂环境下，策略一般都具有一定的随机性。DDPG使用确定性的策略梯度方法。对于随机环境的场景，该方法并不适用。针对此问题，Heess等人\cite{heess2015learning}提出了一种适用于连续动作空间任务的通用框架，称为随机值梯度(Stochastic Value Gradient，SVG)方法。SVG使用“再参数化”(re-parameterization)的数学技巧来学习环境动态性的生成模型，将确定性策略梯度方法扩展为一种随机环境下的策略优化过程。Balduzzi等人\cite{balduzzi2015compatible}基于相容的值函数逼近器(compatible function approximation)理论，提出了值梯度反向更新(Value-Gradient Backpropagation，GProp)方法。Peng等人\cite{peng2016terrain}融合多个策略网络和对应的值网络，提出了一种基于混合型行动者评论家指导(Mixture of Actor Critic Experts，MACE)的深度策略梯度方法。该方法在自适应机器人控制任务中取得了实质性的进展。MACE相比于单个AC框架指导的深度策略梯度方法，有着更快的学习速度。随后，Heess等人\cite{heess2015memory}使用循环神经网络，进一步扩展了DPG和SVG算法的适用范围，提出了循环确定性策略梯度(Recurrent Deterministic Policy Gradient，RDPG)和循环随机值梯度(Recurrent Stochastic Value Gradient，RSVG)方法。RDPG和RSVG可以处理一系列部分可观察场景下连续动作的控制任务。Hausknecht等人\cite{hausknecht2015deep}进一步将深度策略梯度方法扩展到了参数化的连续动作空间问题中。此后，Schulman等人\cite{schulman2015gradient}提出了一种形式化的随机计算图模型(stochastic computation graphs)，开展了同时包含随机性和确定性操作的复杂深度策略梯度的研究。
 	
 	\subsection{异步优势行动者评论家算法}
 	不同类型的深度神经网络为DRL中策略优化任务提供了高效运行的表征形式。为了缓解传统策略梯度方法与神经网络结合时出现的不稳定性，各类深度策略梯度方法(如DDPG、SVG等)都采用了经验回放机制来消除训练数据间的相关性。然而经验回放机制存在两个不足之处：
@@ -325,7 +325,7 @@
 		\item agent与环境的每次实时交互都需要耗费很多的内存和计算力；
 		\item 经验回放机制要求agent采用离策略(off-policy)方法来进行学习，而离策略方法只能基于旧策略生成的数据进行更新。
 	\end{enumerate}
-	针对这些问题，Mnih等人根据异步强化学习(Asynchronous Reinforcement Learning，ARL)的思想，提出了一种轻量级的DRL框架，该框架可以使用异步的梯度下降法来优化网络控制器的参数，并可以结合多种RL算法。其中，异步的优势行动者评论家算法(Asynchronous Advantage Actor-Critic，A3C)在各类连续动作空间的控制任务上表现的最好。
+	针对这些问题，Mnih等人\cite{mnih2016asynchronous}根据异步强化学习(Asynchronous Reinforcement Learning，ARL)的思想，提出了一种轻量级的DRL框架，该框架可以使用异步的梯度下降法来优化网络控制器的参数，并可以结合多种RL算法。其中，异步的优势行动者评论家算法(Asynchronous Advantage Actor-Critic，A3C)在各类连续动作空间的控制任务上表现的最好。
 	
 	具体地，A3C算法利用CPU多线程的功能并行、异步地执行多个agent。因此在任意时刻，并行的agent都将会经历许多不同的状态，去除了训练过程中产生的状态转移样本之间的关联性。因此这种低消耗的异步执行方式可以很好地替代经验回放机制。
 	
@@ -528,7 +528,7 @@
 		\end{tabular}
 	\end{table}
 
-	\section{PPO算法的具体实现}
+	\section{PPO算法的具体实现}\label{sec:ppo-code}
 	\begin{figure}[h]
 		\centering
 		\includegraphics[width=14cm]{./pic/ppo.jpg}
@@ -697,22 +697,74 @@ self.actor_train_op = tf.train.AdamOptimizer(LR).minimize(self.actor_loss)
 	本章节的主要目的是为后续在更复杂的三维环境中实践PPO算法奠下基础，为之后的模型优化和架构设计积累经验。
 	
 	\section{三维机械臂环境中的PPO算法实践}
+	上一节中，PPO算法在构建的二维机械臂环境中表现良好，并且经过大量实验确定了模型中超参数的最佳实践，本节将使用虚拟现实技术Unity引擎构建三维机械臂环境，并在此环境中应用PPO算法。
 	\subsection{架构设计}
-	[TODO]
+	首先需要构建基于Unity的机械臂环境，由于Unity采用C\#作为脚本语言，而PPO算法的运行时为Python，所以无法像前一小节那样直接在训练时与环境交互，需要对两者的交互引入中间层。
+	
+	在此之前，先对机械臂环境进行建模。如图\ref{pic:unity-arm-model}所示，此机械臂包含三个旋转关节，分别是底座旋转电机、直臂摆动电机和横臂摆动电机，因此将三个电机的转速作为动作空间，动作空间表示为$(motor_1, motor_2, motor_3)$。对于状态空间，采用三个电机的旋转欧拉角作为观测量，在Unity中，每个物体的旋转状态都可以使用一个由欧拉角组成的三元组来表示。此外，将机械臂尾端与目标点的距离也作为观测量，当距离小于一定值时，判断动作完成，因此该环境的状态空间包含17个值，分别是尾端与目标点的距离、动作是否完成、三个电机的旋转状态(9个值)、尾端坐标(3个值)和目标点坐标(3个值)。因此，该机械臂环境拥有17维度的状态空间和3维度的动作空间。
+	
+	\begin{figure}[]
+		\includegraphics[width=14cm]{./pic/unity-arm-model.jpg}
+		\caption{在Unity编辑器中构建机械臂模型}
+		\label{pic:unity-arm-model}
+	\end{figure}
+
+	然后，为了能够让模型在训练时与Unity环境实时交互获取数据，引入了基于HTTP协议的数据中间层，模型与环境通过HTTP连接交换数据，这一点与RPC的思想十分类似\footnote{远程过程调用（Remote Procedure Call，缩写为 RPC）是一个计算机通信协议。该协议允许运行于一台计算机的程序调用另一台计算机的子程序。本节则是在一个运行时环境(C\#)中调用另一个运行时环境(Python)的函数。}。
+	
+	\begin{figure}[htbp]
+		\includegraphics[width=14cm]{./pic/unity-ppo.jpg}
+		\caption{PPO通过HTTP协议与Unity环境进行互动}
+		\label{pic:unity-ppo}
+	\end{figure}
+
+	整体架构如\ref{pic:unity-ppo}所示，同时为了减少原有的模型改动，需要对与Unity交互的部分进行封装，同样采用与gym类似的接口风格。训练开始时，PPO模型像调用一般的gym环境一样，调用封装好的中间层代码，比如在重置环境时，PPO模型调用\lstinline|env.reset()|函数，中间层代码向Unity环境发起HTTP请求，参数中包含调用的函数名\lstinline|reset|信息，Unity端收到请求，执行重置环境命令，并将环境的状态信息返回给中间层，PPO通过中间层获取到状态信息，收集足够的数据后，更新网络权重。
+	
+	由于三维空间下状态空间的维度比二维空间多很多，因此行动者和评价者的近似网络层数也要增加，\ref{sec:ppo-code}节中提到，二维空间采用一个包含100个节点的全连接层来拟合，本节中将采用3个包含100个节点的全连接层拟合，以增强网络的表达能力，同时，也需要更长的训练周期来使网络训练到最佳状态。
+	
 	\subsection{实验结果}
-	[TODO]
+	\begin{figure}[h]
+		\centering
+		\subfigure[训练过程中的reward变化]{
+			\includegraphics[width=7cm]{./pic/unity-reward.pdf}
+		}
+		\subfigure[训练过程中的loss变化]{
+			\includegraphics[width=7cm]{./pic/unity-loss.pdf}
+		}
+		\caption{Unity环境下PPO算法的训练过程}
+		\label{fig:unity-res}
+	\end{figure}
+	图\ref{fig:unity-res}展示了经过800000步训练后的模型参数趋势，可以看到，由于有了上一章节的参数调优，PPO算法很好地胜任了三维Unity环境下机械臂的训练任务，证明Unity完全可以作为强化学习算法的训练拟真环境。
+	
+	其次，在训练过程中，发现模型的训练速度与Unity的图形设置项有关，由于本次训练没有使用Unity的图像作为输入，所以在训练时将渲染窗口分辨率调整至最低可以提高训练速度。此外，Unity默认开启了垂直同步，即将图形的刷新率与显示器保持一致，这依然会使训练速度下降，因为每个训练周期往往包含数百步的交互，如果帧速率限制到60帧甚至更低，时间开销将会无法忍受，因此，在训练时应当将Unity环境的渲染帧率设置为一个比较大的数，使训练效果达到最佳。
+
 	\subsection{总结}
-	[TODO]
+	本节主要将Unity环境与PPO算法结合起来，通过建立HTTP中间层的方式，在两种不同的运行时之间交换数据，并且很好地完成了PPO算法的训练任务，证明Unity环境完全可以作为强化学系算法的仿真环境。
 	
 	\chapter{全文总结与展望}
 	\section{全文总结}
-	[TODO]
+	本文尝试将虚拟现实技术中的Unity引擎与强化学习算法的训练结合起来，并通过多线程训练等优化手段，使得强化学习的训练时间大幅度减少。同时通过Unity强大的物理引擎尽可能地拟合真实环境，从而使得训练出的强化学习模型无需经过细致调参优化就可以很好地迁移应用到实体机械环境上。
+	
+	为了探究强化学习算法与Unity环境整合的可能性，首先在二维机械臂环境中对PPO算法进行实践，首先在pyglet图形引擎基础上搭建了一个包含7维度状态空间和2维度动作空间的简单机械臂环境，然后在此机械臂环境上进行了大量实验，对前文中提到的两种目标函数，以及算法中的参数对实验结果的影响进行了检验。实验结果表明，基于裁剪概率比率的目标函数$L_{CLIP}(\theta)$比基于动态惩罚项的目标函数$L_{BL}(\theta)$拥有更稳定的表现，其次初始环境参数的随机化以及对优势评价指标规范化同样可以提高模型稳定性，最后对模型中的其他参数进行了调优，使得模型训练的时间开销大幅减少。
+	
+	其次根据在二维机械臂环境中总结出的经验，尝试将PPO算法应用于Unity环境，在搭建的包含17维度状态空间和3维度动作空间的机械臂环境中，将PPO算法中近似函数的拟合网络层数增加，并使用HTTP协议在两种运行时间交换训练数据，最终成功训练出很好的效果，证明Unity作为强化学习算法的仿真环境具有很大的探索空间。
 	
 	\section{后续工作展望}
-	[TODO]
+	本文虽然成功地将一种成熟的强化学习算法与Unity环境整合起来，并完成了训练过程，但在整合过程中，仍存在很多问题。首先每次训练交互数据都要重新建立HTTP连接，造成数据交换效率性能低下；其次Unity中建立的模型不够精细，没有引入重力系统，没有尽可能地拟真真实环境；最后由于技术限制，没有在实际的机械臂上应用该模型，没有对模型的实用性进行验证。
+	
+	因此，在进一步的工作中，应当从以下几个方面进行改进：
+	\begin{itemize}
+		\item 优化数据交互方式，复用连接或者采用多连接方式提高数据交换效率；
+		\item 优化Unity模型，引入重力系统，并尝试采用图像作为网络输入，提高模型的可用性；
+		\item 在实际机械臂上应用该模型，并查看效果，进一步对模型实用性进行验证。
+	\end{itemize}
 	
 	\thesisacknowledgement
-	[TODO]
+	叔本华在其著作《作为意志和表象的世界》中精确而严谨地描述了他的钟摆理论：
+	“……从生命的角度来看，动物和人的本质总是受痛苦支配的。……如果因为太容易获得满足而使它丧失欲求的对象，就会产生可怕的空虚和无聊，换句话说，它的生命和存在本身就成为无法忍受的负担。因此它的生命像钟摆一样在痛苦和厌烦之间来回摆动。”
+	
+	学年伊始，毕设的完成便成为一种“欲求的对象”。当开始审视毕设命题时，我看到了一口黝峻的深渊，所幸恩师谢宁的指导如一束灯塔之光，拨云见日，划破了这看似幽不可知的黑暗，给我指明了前进的方向。所以对恩师的谢意，文字不能表出半分。
+	
+	斗转星移，深渊不断吞噬着为数不多的岁月，痛苦在黑暗中悄声滋长，所幸在痛苦与疲乏交错的间隙里，能一直得到挚友的鼓励和陪伴，在此处，感谢你们。
 	
 	
 	\thesisloadbibliography[nocite]{reference}
@@ -726,7 +778,7 @@ self.actor_train_op = tf.train.AdamOptimizer(LR).minimize(self.actor_loss)
 	% \bibliography{reference}
 	%
 	
-	\thesisappendix
+	%\thesisappendix
 	%\lstinputlisting{../project/simply_PPO.py}
 	
 	\thesistranslationoriginal

@@ -427,6 +427,8 @@ INPUT ./pic/should_norm_advantage.pdf
 INPUT c:/texlive/2018/texmf-dist/fonts/tfm/adobe/zapfding/pzdr.tfm
 INPUT ./pic/BATCH.pdf
 INPUT ./pic/EP_LEN.pdf
+INPUT ./pic/unity-arm-model.jpg
+INPUT ./pic/unity-ppo.jpg
 INPUT ./pic/ProximalPolicyOptimizationAlgorithms-01.jpg
 INPUT ./pic/ProximalPolicyOptimizationAlgorithms-02.jpg
 INPUT main.aux

@@ -4,6 +4,7 @@ using UnityEngine;
 using Server;
 using MyUtils;
 using System.Threading;
+using System;
 
 public class rotate : MonoBehaviour {
 
@@ -14,7 +15,9 @@ public class rotate : MonoBehaviour {
   public GameObject point;
   public GameObject target;
 
-  float[] targetLimit = { 20f, 0f, 20f };
+  float[] rotateAngle = { 0f, 0f, 0f };
+
+  float[] targetLimit = { 7f, 0f, 7f };
 
   HTTPServer s = new HTTPServer();
   Converter Converter = new Converter();
@@ -23,6 +26,11 @@ public class rotate : MonoBehaviour {
     reset();
     // Thread t = new Thread(new ThreadStart(remoteControl));
     // t.Start();
+  }
+
+  void Awake()
+  {
+    Application.targetFrameRate = 1000;
   }
   
   // Update is called once per frame
@@ -68,22 +76,29 @@ public class rotate : MonoBehaviour {
 
   float[] reset() {
     float[] newTargetPosition = { 0, 0, 0 };
-    for (int i = 0; i < 3; i++) {
-      newTargetPosition [i] = random(targetLimit [i], targetLimit[i] / 2);
-    }
+    float a = random(targetLimit[0], -5f);
+    float b = random(6.28f, 0);
+    newTargetPosition[0] = a * (float)Math.Cos(b);
+    newTargetPosition[2] = a * (float)Math.Sin(b);
     target.transform.position = new Vector3 (newTargetPosition[0], newTargetPosition[1] + 0.5f, newTargetPosition[2]);
     
     return getState();
   }
 
   float random(float scale, float offset) {
-    return Random.value * scale - offset;
+    return UnityEngine.Random.value * scale - offset;
   }
 
   float[] step(float[] action) {
     j_1.Rotate (0, action[0], 0);
     j_2.Rotate (0, 0, action[1]);
     j_3.Rotate (0, 0, action[2]);
+
+    for (int i = 0; i < 3; i++) {
+      rotateAngle[i] += action[i];
+      rotateAngle[i] = rotateAngle[i] > 360 ? rotateAngle[i] - 360 :
+        rotateAngle[i] < 0 ? -rotateAngle[i] : rotateAngle[i];
+    }
 
     return getState();
   }
@@ -109,12 +124,17 @@ public class rotate : MonoBehaviour {
     Transform[] ts = { j_1, j_2, j_3 };
 
     for (int i = 0; i < 3; i++) {
-      Quaternion q = ts[i].rotation;
-      state.AddRange(new float[]{ q.x, q.y, q.z, q.w });
+      var t = ts[i].transform.rotation;
+      var q = t.eulerAngles / 360.0f;
+      state.AddRange(new float[]{ q.x, q.y, q.z});
     }
 
+    //state.AddRange(new float[]{ rotateAngle[0] / 360, rotateAngle[1] / 360, rotateAngle[2] / 360 });
+
     var position = point.transform.position;
+    var tp = target.transform.position;
     state.AddRange(new float[]{ position.x, position.y, position.z });
+    state.AddRange(new float[]{ tp.x, tp.y, tp.z });
 
     return state.ToArray();
   }

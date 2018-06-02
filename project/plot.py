@@ -1,5 +1,6 @@
 from matplotlib import pyplot as plt
 from matplotlib import rcParams
+import numpy as np
 import json
 import os
 
@@ -18,6 +19,16 @@ def loadjson(filename):
     with open('./data/{}'.format(filename), 'r') as fp:
         current_data = json.load(fp)
     return current_data
+
+def loadcsvs():
+    files = os.listdir('./data/csv')
+    data = []
+    for f in files:
+        with open('./data/csv/{}'.format(f), 'r') as fp:
+            raw = fp.readlines()[1:]
+            current_data = list(map(lambda x: [int(x.split(',')[1]), float(x.split(',')[2])], raw))
+            data.append(current_data)
+    return data
 
 def collect_data_by_group(group_names):
     data = {}
@@ -112,6 +123,23 @@ def params_table():
     with open('table.csv', 'w') as f:
         f.write('\n'.join(map(lambda x: ','.join(map(str, x)), table)))
 
+def plot_unity():
+    data = loadcsvs()
+    fig_size = (5, 2.5)
+    fig = plt.figure(1, fig_size)
+    name = ['unity-reward', 'unity-value-estimate', 'unity-loss']
+    label = ['Reward', 'estimate', 'Value Loss']
+
+    for i in range(3):
+        plt.cla()
+        ax = fig.add_subplot(111)
+
+        current_data = np.array(data[i])[10:]
+        ax.plot(current_data[:,0], current_data[:,1], label=label[i])
+        setlabel(ax)
+        plt.savefig(picpath(name[i]))
+
 if __name__ == '__main__':
-    kl_vs_clip()
+    # kl_vs_clip()
     # params_table()
+    plot_unity()

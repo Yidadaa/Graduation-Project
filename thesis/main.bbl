@@ -1,10 +1,84 @@
 \begin{thebibliography}{lo}
 \interlinepenalty=10000
 \setlength{\itemsep}{0bp}\setlength{\parskip}{0pt}\small
+\bibitem{kober2013reinforcement} J.~Kober, J.~A. Bagnell, J.~Peters.
+  Reinforcement learning in robotics: A survey[J]. The International Journal of
+  Robotics Research, 2013, 32(11): 1238-1274
+\bibitem{mnih2013playing} V.~Mnih, K.~Kavukcuoglu, D.~Silver, et~al. Playing
+  atari with deep reinforcement learning[J]. arXiv preprint arXiv:1312.5602,
+  2013,
+\bibitem{mnih2015human} V.~Mnih, K.~Kavukcuoglu, D.~Silver, et~al. Human-level
+  control through deep reinforcement learning[J]. Nature, 2015, 518(7540): 529
+\bibitem{van2016deep} H.~Van~Hasselt, A.~Guez, D.~Silver. Deep reinforcement
+  learning with double q-learning.[C]. AAAI, 2016, 2094-2100
+\bibitem{bellemare2017distributional} M.~G. Bellemare, W.~Dabney, R.~Munos. A
+  distributional perspective on reinforcement learning[J]. arXiv preprint
+  arXiv:1707.06887, 2017,
+\bibitem{osband2016deep} I.~Osband, C.~Blundell, A.~Pritzel, et~al. Deep
+  exploration via bootstrapped dqn[C]. Advances in neural information
+  processing systems, 2016, 4026-4034
 \bibitem{Schulman2015Trust} J.~Schulman, S.~Levine, P.~Moritz, et~al. Trust
   region policy optimization[J]. Computer Science, 2015, 1889-1897
 \bibitem{Schulman2017Proximal} J.~Schulman, F.~Wolski, P.~Dhariwal, et~al.
   Proximal policy optimization algorithms[J]. , 2017,
+\bibitem{lillicrap2015continuous} T.~P. Lillicrap, J.~J. Hunt, A.~Pritzel,
+  et~al. Continuous control with deep reinforcement learning[J]. arXiv preprint
+  arXiv:1509.02971, 2015,
+\bibitem{sutton1998reinforcement} R.~S. Sutton, A.~G. Barto. Reinforcement
+  learning: An introduction[M]. MIT press Cambridge, 1998
+\bibitem{tsitsiklis1996analysis} J.~Tsitsiklis, B.~Van~Roy. An analysis of
+  temporal-difference learning with function approximationtechnical[R]. Report
+  LIDS-P-2322). Laboratory for Information and Decision Systems, Massachusetts
+  Institute of Technology,
+\bibitem{bellemare2016increasing} M.~G. Bellemare, G.~Ostrovski, A.~Guez,
+  et~al. Increasing the action gap: New operators for reinforcement
+  learning.[C]. AAAI, 2016, 1476-1483
+\bibitem{lin1993reinforcement} L.-J. Lin. Reinforcement learning for robots
+  using neural networks[R]. Carnegie-Mellon Univ Pittsburgh PA School of
+  Computer Science,
+\bibitem{schaul2015prioritized} T.~Schaul, J.~Quan, I.~Antonoglou, et~al.
+  Prioritized experience replay[J]. arXiv preprint arXiv:1511.05952, 2015,
+\bibitem{lakshminarayanan2016dynamic} A.~S. Lakshminarayanan, S.~Sharma,
+  B.~Ravindran. Dynamic frame skip deep q network[J]. arXiv preprint
+  arXiv:1605.05365, 2016,
+\bibitem{van2016learning} H.~van Hasselt, A.~Guez, M.~Hessel, et~al. Learning
+  functions across many orders of magnitudes[J]. CoRR, abs/1602.07714, 2016,
+\bibitem{franccois2015discount} V.~Fran{\c{c}}ois-Lavet, R.~Fonteneau,
+  D.~Ernst. How to discount deep reinforcement learning: Towards new dynamic
+  strategies[J]. arXiv preprint arXiv:1512.02011, 2015,
+\bibitem{wang2015dueling} Z.~Wang, T.~Schaul, M.~Hessel, et~al. Dueling network
+  architectures for deep reinforcement learning[J]. arXiv preprint
+  arXiv:1511.06581, 2015,
+\bibitem{hausknecht2015deep} M.~Hausknecht, P.~Stone. Deep recurrent q-learning
+  for partially observable mdps[J]. CoRR, abs/1507.06527, 2015,
+\bibitem{williams1992simple} R.~J. Williams. Simple statistical
+  gradient-following algorithms for connectionist reinforcement learning[M].
+  Springer, 1992, 5-32
+\bibitem{hafner2011reinforcement} R.~Hafner, M.~Riedmiller. Reinforcement
+  learning in feedback control[J]. Machine learning, 2011, 84(1-2): 137-169
+\bibitem{schulman2015high} J.~Schulman, P.~Moritz, S.~Levine, et~al.
+  High-dimensional continuous control using generalized advantage
+  estimation[J]. arXiv preprint arXiv:1506.02438, 2015,
+\bibitem{silver2014deterministic} D.~Silver, G.~Lever, N.~Heess, et~al.
+  Deterministic policy gradient algorithms[C]. ICML, 2014,
+\bibitem{heess2015learning} N.~Heess, G.~Wayne, D.~Silver, et~al. Learning
+  continuous control policies by stochastic value gradients[C]. Advances in
+  Neural Information Processing Systems, 2015, 2944-2952
+\bibitem{balduzzi2015compatible} D.~Balduzzi, M.~Ghifary. Compatible value
+  gradients for reinforcement learning of continuous deep policies[J]. arXiv
+  preprint arXiv:1509.03005, 2015,
+\bibitem{peng2016terrain} X.~B. Peng, G.~Berseth, M.~Van~de Panne.
+  Terrain-adaptive locomotion skills using deep reinforcement learning[J]. ACM
+  Transactions on Graphics (TOG), 2016, 35(4): 81
+\bibitem{heess2015memory} N.~Heess, J.~J. Hunt, T.~P. Lillicrap, et~al.
+  Memory-based control with recurrent neural networks[J]. arXiv preprint
+  arXiv:1512.04455, 2015,
+\bibitem{schulman2015gradient} J.~Schulman, N.~Heess, T.~Weber, et~al. Gradient
+  estimation using stochastic computation graphs[C]. Advances in Neural
+  Information Processing Systems, 2015, 3528-3536
+\bibitem{mnih2016asynchronous} V.~Mnih, A.~P. Badia, M.~Mirza, et~al.
+  Asynchronous methods for deep reinforcement learning[C]. International
+  Conference on Machine Learning, 2016, 1928-1937
 \bibitem{Ioffe2015Batch} S.~Ioffe, C.~Szegedy. Batch normalization:
   Accelerating deep network training by reducing internal covariate shift[J]. ,
   2015, 448-456

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4379935, g: 0.48595524, b: 0.5662323, a: 1}
+  m_IndirectSpecularColor: {r: 0.44244426, g: 0.4915138, b: 0.57136583, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -322,7 +322,7 @@ Camera:
     height: 20
   near clip plane: 1
   far clip plane: 2000
-  field of view: 106.7
+  field of view: 51.1
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -346,13 +346,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 203289610}
-  m_LocalRotation: {x: -0, y: 0.88263875, z: -0, w: -0.47005206}
-  m_LocalPosition: {x: 15.44, y: 8.57, z: 5.45}
+  m_LocalRotation: {x: 0.004037171, y: 0.8631795, z: -0.5045712, w: 0.01768817}
+  m_LocalPosition: {x: -3.1, y: 26.08, z: 11.6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 236.075, z: 0}
+  m_LocalEulerAnglesHint: {x: 60.6, y: 176.91, z: -1.27}
 --- !u!1001 &311497709
 Prefab:
   m_ObjectHideFlags: 0
@@ -643,9 +643,6 @@ MonoBehaviour:
   j_1: {fileID: 925166269}
   j_2: {fileID: 567295196}
   j_3: {fileID: 166353718}
-  a_1: {fileID: 925166273}
-  a_2: {fileID: 567295200}
-  a_3: {fileID: 166353722}
   point: {fileID: 854194998}
   target: {fileID: 1356650199}
 --- !u!1001 &1207523786
@@ -842,7 +839,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1356650199}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.66, y: 8.87, z: -6.14}
+  m_LocalPosition: {x: 4.16, y: 0.77, z: 3.01}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -992,13 +989,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1694121083}
-  m_LocalRotation: {x: 0.754904, y: -0.16146752, z: 0.20227589, w: 0.602605}
+  m_LocalRotation: {x: 0.31007913, y: -0.7984052, z: 0.49751315, w: 0.13740759}
   m_LocalPosition: {x: -80, y: 51, z: -355}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 102.802, y: -30, z: -0.000015258789}
+  m_LocalEulerAnglesHint: {x: 118.4, y: -10.8, z: 851.1}
 --- !u!1001 &1729320855
 Prefab:
   m_ObjectHideFlags: 0

@@ -1,12 +1,12 @@
 # Fdb version 3
-["bibtex main"] 1527699397 "main.aux" "main.bbl" "main" 1527699397
+["bibtex main"] 1527924072 "main.aux" "main.bbl" "main" 1527924072
   "./thesis-uestc.bst" 1527126864 7760 3120dd1a83d3b036185bc09ff97f1f77 ""
-  "main.aux" 1527699396 24354 661012f585c8cfcad61c67559090d12a ""
-  "reference.bib" 1527668671 4000 5c8a6e222db7d8634f9d5363b8e25306 ""
+  "main.aux" 1527924071 25976 65fe9bce958ffac2afd289786ea10c60 ""
+  "reference.bib" 1527924050 11618 77680410b350c14f1e19fb02d09c9e44 ""
   (generated)
   "main.bbl"
   "main.blg"
-["pdflatex"] 1527699388 "main.tex" "main.pdf" "main" 1527699388
+["pdflatex"] 1527924064 "main.tex" "main.pdf" "main" 1527924064
   "achievement.aux" 0 -1 0 ""
   "c:/texlive/2018/texmf-dist/fonts/map/fontname/texfonts.map" 1527176327 3332 103109f5612ad95229751940c61aada0 ""
   "c:/texlive/2018/texmf-dist/fonts/tfm/adobe/symbol/psyr.tfm" 1527178134 1408 5937f58aa508ea2cea4901c07d10f5fe ""
@@ -206,10 +206,10 @@
   "c:/texlive/2018/texmf-dist/tex/xelatex/xecjk/xeCJK.cfg" 1527178657 408 0420c5f7023f18cd7aa3b8b4e2acf8ea ""
   "c:/texlive/2018/texmf-dist/tex/xelatex/xecjk/xeCJK.sty" 1527178657 180948 958dcd214341ab3df024d19f0c271b99 ""
   "c:/texlive/2018/texmf-var/web2c/xetex/xelatex.fmt" 1527178950 3731670 150dfeebf019f0a5c670dc599d8f07b8 ""
-  "main.aux" 1527699388 9 a94a2480d3289e625eea47cd1b285758 ""
+  "main.aux" 1527924064 9 a94a2480d3289e625eea47cd1b285758 ""
   "main.bbl" 0 -1 0 "bibtex main"
   "main.out" 0 -1 0 ""
-  "main.tex" 1527690181 71225 3e94d1dd4e72b4f69019da7b29906eaf ""
+  "main.tex" 1527924035 74950 a0a7b295d669746465550ccd0085b72e ""
   "nul" 0 0 d41d8cd98f00b204e9800998ecf8427e ""
   "pic/2darm-ppo.jpg" 1527598057 71664 586feae182ff375abbd802b2e097f7e3 ""
   "pic/2darm.jpg" 1527596795 105671 c020238a83c26da062f2e4560cf38e51 ""
@@ -236,15 +236,17 @@
   "pic/ros-screenshot.jpg" 1527405207 35716 26312b9eb950ed65bedffd672a09eb27 ""
   "pic/should_norm_advantage.pdf" 1527688480 30275 5dab2bfbf927718a91d4f5472a08e0f3 ""
   "pic/should_random_target.pdf" 1527688480 47574 98b4a8c05767236754183b7b4fc195b9 ""
+  "pic/unity-arm-model.jpg" 1527919011 302018 fc1131b6a4290bfe94055d9204c48d0c ""
   "pic/unity-logo.jpg" 1527409346 33138 7f1dab3f0e367e7d50b90c8318c160e7 ""
+  "pic/unity-ppo.jpg" 1527920616 180197 f4304c9a2aa5e7c306efb4ab43b4eb99 ""
   "pic/unity.jpg" 1527409147 204067 82c7027b8694d7f0b3768522b416d34b ""
   "thesis-uestc.cls" 1527404091 18334 1624c7dc737089d6a38f836c10658654 ""
   (generated)
-  "main.aux"
-  "main.ist"
   "main.out"
-  "main.pdf"
-  "main.glo"
-  "achievement.aux"
-  "main.toc"
   "main.log"
+  "main.ist"
+  "main.pdf"
+  "main.aux"
+  "main.toc"
+  "achievement.aux"
+  "main.glo"

@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System;
+using UnityEngine;
 
 namespace MyUtils
 {
@@ -9,7 +11,15 @@ namespace MyUtils
 			List<float> f = new List<float>();
 
 			for(int i = 0; i < res.Length; i++){
-				f.Add(System.Convert.ToSingle(res[i]));
+        try
+        {
+            f.Add(System.Convert.ToSingle(res[i]));
+        }
+        catch (System.Exception)
+        {
+            Debug.Log(res[i]);
+            throw;
+        }
 			}
 
       return f.ToArray();
