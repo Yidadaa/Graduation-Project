@@ -77,7 +77,7 @@ class ArmEnv(object):
             self.arm_info[1, 2:4] = self.arm_info[0, 2:4] + arm2dx_dy  # (x2, y2)
 
             if self.should_random_target:
-                self.point_info[:] = np.random.random_integers(0, 400, 2)
+                self.point_info[:] = np.random.random_integers(50, 350, 2)
             else:
                 self.point_info[:] = self.point_info_init
         return self._get_state()[0]

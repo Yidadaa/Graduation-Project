@@ -8,7 +8,7 @@ import requests
 class UnityArmEnv(object):
     action_bound = []
     action_dim = 3
-    state_dim = 17
+    state_dim = 11
     last_distance = 10000
     header = {
         'Connection': 'close'
@@ -27,6 +27,7 @@ class UnityArmEnv(object):
         Args:
             action: 动作向量
         '''
+        action = np.array(action) * 10
         state = self.call_unity(self.float2str(action))
         state = self.str2float(state)
         reward = self.reward(state)
@@ -57,6 +58,8 @@ class UnityArmEnv(object):
 
         if state[0] > 0 or d < 1:
             r = 0.1
+
+        r = r + 0.001 * (self.last_distance - d) - 0.005 * d
 
         self.last_distance = d
 

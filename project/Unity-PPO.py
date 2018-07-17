@@ -105,12 +105,8 @@ class PPO(object):
             self.atrain_op = tf.train.AdamOptimizer(
                 self.A_LR).minimize(self.aloss)
 
-        # tf.summary.scalar('aloss', self.aloss)
-        # tf.summary.scalar('closs', self.closs)
-
-        # tf.summary.FileWriter("log/", self.sess.graph)
-
         self.sess.run(tf.global_variables_initializer())
+        self.saver = tf.train.Saver()
 
     def update(self, s, a, r):
         self.sess.run(self.update_oldpi_op)
@@ -164,6 +160,12 @@ class PPO(object):
         if s.ndim < 2:
             s = s[np.newaxis, :]
         return self.sess.run(self.v, {self.tfs: s})[0, 0]
+
+    def save(self, name):
+        self.saver.save(self.sess, './model/' + name)
+
+    def load(self, name):
+        self.saver.restore(self.sess, tf.train.latest_checkpoint('./model'))
 
 
 def train(config={}, use_unity_arm=False):
@@ -236,10 +238,22 @@ def train(config={}, use_unity_arm=False):
         'lambda': lambdas,
         'time': elapsed, # 耗时
         'config': config, # 当前变量
-    }
+    }, ppo, env
+
+def play():
+    print('Playing...')
+    env = ArmEnv()
+    ppo = PPO()
+    ppo.load('unity-arm')
+    s = env.reset()
+    while True:
+        a = ppo.choose_action(s)
+        s, r, done = env.step(a)
+        env.render()
 
 
 if __name__ == '__main__':
+    play()
     configs = {
         'optimization_type': [0, 1],
         'EP_LEN': [100, 300, 500],
@@ -259,14 +273,17 @@ if __name__ == '__main__':
     }
     for attr, values in configs.items():
         for value in values:
-            current_data = train({
+            current_data, ppo, env = train({
                 attr: value,
-                'should_render': False, # 关闭GUI显示
+                'should_render': True, # 关闭GUI显示
                 'optimization_type': 1,
-                'EP_LEN': 10240,
-                'BATCH': 1024,
-                'EP_MAX': 100
+                'EP_LEN': 2560,
+                'BATCH': 128,
+                'EP_MAX': 400,
+                'should_random_target': True
             }, use_unity_arm=True)
-            # 保存实验数据
+            # 保存实验数据r
             with open('./data/{}__{}.json'.format(attr, value), 'w') as f:
                 json.dump(current_data, f)
+
+            ppo.save('unity-arm')

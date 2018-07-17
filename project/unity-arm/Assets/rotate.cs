@@ -15,6 +15,8 @@ public class rotate : MonoBehaviour {
   public GameObject point;
   public GameObject target;
 
+  List<Vector3> initState;
+
   float[] rotateAngle = { 0f, 0f, 0f };
 
   float[] targetLimit = { 7f, 0f, 7f };
@@ -26,6 +28,7 @@ public class rotate : MonoBehaviour {
     reset();
     // Thread t = new Thread(new ThreadStart(remoteControl));
     // t.Start();
+    // initState.AddRange(new Vector3[]{ j_1.rotation.eulerAngles, j_2.rotation.eulerAngles, j_3.rotation.eulerAngles });
   }
 
   void Awake()
@@ -36,7 +39,8 @@ public class rotate : MonoBehaviour {
   // Update is called once per frame
   void Update () {
     customControl();
-    remoteControl();
+    // print(getState());
+    // remoteControl();
   }
 
   void customControl() {
@@ -81,6 +85,10 @@ public class rotate : MonoBehaviour {
     newTargetPosition[0] = a * (float)Math.Cos(b);
     newTargetPosition[2] = a * (float)Math.Sin(b);
     target.transform.position = new Vector3 (newTargetPosition[0], newTargetPosition[1] + 0.5f, newTargetPosition[2]);
+
+    // j_1.rotation.SetEulerAngles(initState[0]);
+    // j_2.rotation.SetEulerAngles(initState[1]);
+    // j_3.rotation.SetEulerAngles(initState[2]);
     
     return getState();
   }
@@ -116,18 +124,16 @@ public class rotate : MonoBehaviour {
 
   float[] getState() {
     float distance = getDistance();
-    int done = distance < 0.5 ? 1 : 0; // 机械臂末端与目标点重合，任务完成
+    int done = distance < 1 ? 1 : 0; // 机械臂末端与目标点重合，任务完成
     List<float> state = new List<float>();
     state.Add(done);
     state.Add(distance);
     
     Transform[] ts = { j_1, j_2, j_3 };
 
-    for (int i = 0; i < 3; i++) {
-      var t = ts[i].transform.rotation;
-      var q = t.eulerAngles / 360.0f;
-      state.AddRange(new float[]{ q.x, q.y, q.z});
-    }
+    state.Add(ts[0].transform.rotation.eulerAngles[1] / 360f);
+    state.Add(ts[1].transform.rotation.eulerAngles[2] / 360f);
+    state.Add(ts[2].transform.rotation.eulerAngles[2] / 360f);
 
     //state.AddRange(new float[]{ rotateAngle[0] / 360, rotateAngle[1] / 360, rotateAngle[2] / 360 });
 
